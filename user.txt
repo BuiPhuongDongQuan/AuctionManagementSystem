@@ -1,1 +1,3 @@
 Username,Password,Fullname,PhoneNumber,Email,IDType,IDNumber,CreditPoints
+LQN,Lqn0904@,Lam Quang N,0909090909090,s3980424@gmail.com,079109930297,123456,0
+N,okLtb456),lqn,0909090909090,lamokok,0909,23599,0
