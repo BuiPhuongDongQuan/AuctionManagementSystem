@@ -1,2 +1,0 @@
-ItemName;Category;Description;StartingBid;BidIncrement;EndDateAndTime;Seller;RatingScore
-SamSungA52;Electronic Device;abcdef;10.000$;500$;1/1/2025;Khoi;3.4 
