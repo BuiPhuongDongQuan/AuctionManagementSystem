@@ -5,8 +5,9 @@
 using namespace std;
 
 class User{
-    private:
+    protected:
         static string user_data;
+    private:
         string username;
         string password;
         string fullname;
