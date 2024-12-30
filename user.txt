@@ -1,0 +1,2 @@
+Username,Password,Fullname,PhoneNumber,Email,IDType,IDNumber,CreditPoints
+admin,Admin123@,Nguyen Minh Khoi,123456789,admin@gmail.com,null,null,0
