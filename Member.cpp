@@ -376,7 +376,7 @@ string Member::toLower(const string& str) {
 // Method to search items based on name, category, or credit point range
 void Member::searchItems(const string& name, const string& category, int minBid, int maxBid) {
     vector<Item> results;
-    vector<Item> listings = Item::readData("items.txt"); // This should contain the actual list of items to search from
+    vector<Item> listings = Item::readData("item.txt"); // This should contain the actual list of items to search from
 
     for (const auto& item : listings) {
         bool matchName = name.empty() || toLower(item.getName()).find(toLower(name)) != string::npos;
