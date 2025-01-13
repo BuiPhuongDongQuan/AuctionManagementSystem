@@ -53,8 +53,16 @@ void Item::readItemData(){
     // Populate the users vector with User objects
     for (size_t i = 0; i < rowCount; ++i) { 
         try {
+            long long endDateTime = stol(endDateAndTime[i]);
+            int year = endDateTime / 10000000000LL;
+            int month = (endDateTime / 100000000) % 100;
+            int day = (endDateTime / 1000000) % 100;
+            int hour = (endDateTime / 10000) % 100;
+            int minute = (endDateTime / 100) % 100;
+            int second = endDateTime % 100;
+            
             items.emplace_back(itemName[i], category[i], description[i], stoi(currentBid[i]), stoi(bidIncrement[i]), 
-                               stol(endDateAndTime[i]), stod(ratingPoints[i]));
+                            year, month, day, hour, minute, second);
         } catch (const exception& e) {
             cerr << "Error processing row " << i << ": " << e.what() << endl;
             continue;  // Skip this row and continue with the next one
@@ -230,6 +238,8 @@ string Item::getName() const { return name; }
 string Item::getCategory() const { return category; }
 string Item::getDescription() const {return description;}
 string Item::getItemData() {return item_data;}
+int Item::getCurrentBid() const{ return currentBid; };
+int Item::getBidIncrement() const{ return bidIncrement; };
 const vector<Item>& Item::getItems() {return items;}
 
 // Setter
