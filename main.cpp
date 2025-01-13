@@ -1,5 +1,6 @@
 #include "User.h"
 #include "Admin.h"
+#include "Guest.h"
 #include <iostream>
 
 using namespace std;
@@ -8,18 +9,19 @@ int main() {
 
     // Set the path to the user data file
     User::setUserData("user.txt");
+    Item::setItemData("item.txt");
 
 
 
     // Prompt user for login credentials
-    string username, password;
-    cout << "\nEnter your username: " << endl;
-    cin >> username;
-    cout << "Enter your password: " << endl;
-    cin >> password;
+    // string username, password;
+    // cout << "\nEnter your username: " << endl;
+    // cin >> username;
+    // cout << "Enter your password: " << endl;
+    // cin >> password;
 
     // Attempt login with the provided credentials
-    User::login(username, password);
+    // User::login(username, password);
 
 
     // string username, password, fullname, phoneNumber, email, IDType, IDNumber;
@@ -56,6 +58,11 @@ int main() {
     Admin admin;
     admin.viewMemberInfo();
     admin.viewItemData();
+
+
+    Guest guest;
+    guest.viewItem();
+
     
     return 0;
 }

@@ -2,6 +2,7 @@
 #define ADMIN_H
 #include <string>
 #include "User.h"
+#include "Item.h"
 using namespace std;
 
 class Admin : public User{

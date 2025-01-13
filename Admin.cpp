@@ -2,7 +2,6 @@
 #include "functions/Function.h"
 #include <iostream>
 #include <fstream>
-#include <sstream>
 using namespace std;
 
 // Admin::Admin() : User(){}
@@ -29,17 +28,17 @@ void Admin::viewMemberInfo() const{
 }
 
 void Admin::viewItemData() const{
-    ifstream file("item.txt");
+    Item::readItemData();
+    ifstream file(Item::getItemData());
     if(!file.is_open()){
         cerr << "Error: Cannot open file." << endl;
         return;
     }
 
     string line;
-    cout << "User Data: " << endl;
+    cout << "Item Data: " << endl;
 
     // Read and display each line in file
-    
     while(getline(file, line)){
         cout << line << endl;
     }
