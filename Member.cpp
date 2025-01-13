@@ -9,6 +9,7 @@
 #include "Member.h"
 #include "Item.h"
 #include "Rating.h"
+#include "functions/Function.h"
 using namespace std;
 
 // Constructor
@@ -16,24 +17,6 @@ Member::Member(string username = "", string password = "", string fullname = "",
     string email = "", string IDType = "", string IDNumber = "", double rating = 0.0, int ratingCount = 0, int creditPoints = 0)
     : memberID(nextID++) ,username(username), password(password), fullname(fullname), phoneNumber(phoneNumber), email(email),
     IDType(IDType), IDNumber(IDNumber), rating(rating), ratingCount(ratingCount),creditPoints(creditPoints) {}
-
-// Method to write member information to a file
-void Member::writeToFile(const string& filePath, const string& content) {
-    try {
-        // Open file in append mode
-        ofstream file(filePath, ios::app);
-        if (!file.is_open()) {
-            throw ios_base::failure("Failed to open file.");
-        }
-
-        // Write content to file
-        file << content;
-
-        file.close();
-    } catch (const exception& e) {
-        throw runtime_error(string("Error writing to file: ") + e.what());
-    }
-}
 
 string Member::toString() const {
     stringstream ss;
@@ -218,7 +201,7 @@ void Member::createListing(const string& filePath) {
     // Convert item to string and save it to a file
     try {
         // Use the static method directly
-        Item::writeToFile(filePath, newItem.toString());
+        Function::writeToFile(filePath, newItem.toString());
         cout << "Listing created successfully!\n";
     } catch (const exception& e) {
         cerr << "Error creating listing: " << e.what() << endl;
@@ -237,7 +220,8 @@ void Member::rateMember(double ratingValue) {
 // Helper function to update the item in the file
 void Member::updateItemInFile(const std::string& filePath, const Item& updatedItem) {
     // Read all items from the file
-    std::vector<Item> items = Item::readData(filePath);
+    Item::readItemData();
+    const auto& items = Item::getItems();
 
     // Overwrite the file with updated data
     std::ofstream outFile(filePath, std::ios::trunc); // Truncate mode to overwrite the file
@@ -347,7 +331,8 @@ void Member::placeBid(Item& item, const std::string& filePath, const std::string
 // View all item listings in items.txt
 void Member::viewAllListings(const string& filePath) {
     // Read all items from the file
-    vector<Item> items = Item::readData(filePath);
+    Item::readItemData();
+    const auto& items = Item::getItems();
 
     if (items.empty()) {
         cout << "No items listed currently.\n";
@@ -376,7 +361,8 @@ string Member::toLower(const string& str) {
 // Method to search items based on name, category, or credit point range
 void Member::searchItems(const string& name, const string& category, int minBid, int maxBid) {
     vector<Item> results;
-    vector<Item> listings = Item::readData("items.txt"); // This should contain the actual list of items to search from
+    Item::readItemData();
+    const auto& listings = Item::getItems();
 
     for (const auto& item : listings) {
         bool matchName = name.empty() || toLower(item.getName()).find(toLower(name)) != string::npos;
