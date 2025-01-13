@@ -1,39 +1,38 @@
 #ifndef ITEM_H
 #define ITEM_H
-
 #include <string>
-#include <ctime>
-#include "Member.h" // Include Member class
+#include <vector>
+using namespace std;
 
 class Item {
-private:
-    std::string itemName;
-    std::string category;
-    std::string description;
-    int startingBid;
-    int bidIncrement;
-    time_t endDateTime;
-    Member* seller;
-    float ratingScore;
-    int currentBid;
-    Member* highestBidder;
+    protected:
+        static string item_data;
+    private:
+        std::string itemName;
+        std::string category;
+        std::string description;
+        int startingBid;
+        int bidIncrement;
+        long endDateTime; // Use long for simplicity (UNIX timestamp)
+        double ratingPoints;
+        static vector<Item> items;
 
-public:
-    // Constructor
-    Item(std::string name, std::string cat, std::string desc, int startBid, int increment, time_t end, Member* sellerRef, float rating);
+    public:
+        // Constructor
+        Item(std::string name, std::string cat, std::string desc, int startBid, int increment, long end, double ratingPoints);
+        
+        // Methods
+        void addListing();
+        void displayDetails();
+        static void readItemData();
+        static void setItemData(string filePath);
 
-    // Methods
-    void addListing();
-    bool removeListing();
-    void displayLimitedDetails();
-    void displayFullDetails();
-    bool placeBid(Member* bidder, int bidAmount);
-
-    // Getters
-    std::string getName() const;
-    std::string getCategory() const;
-    int getCurrentBid() const;
-    time_t getEndDateTime() const;
+        // Getters
+        std::string getName() const;
+        std::string getCategory() const;
+        string getDescription()const;
+        static string getItemData();
+        static const vector<Item>& getItems();
 };
 
 #endif // ITEM_H

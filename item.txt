@@ -1,0 +1,2 @@
+ItemName;Category;Description;StartingBid;BidIncrement;EndDateAndTime;RatingScore
+SamSungA52;Electronic Device;abcdef;10000;500;1-1-2025;3,4 
