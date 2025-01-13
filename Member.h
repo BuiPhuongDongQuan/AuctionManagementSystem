@@ -1,47 +1,71 @@
 #ifndef MEMBER_H
 #define MEMBER_H
+
+#include <iostream>
+#include <fstream>
 #include <string>
 #include <vector>
-#include "User.h"
+#include <sstream>
 using namespace std;
 
-class Member : public User {
-    private:
-        static string member_data;
-        string username;
-        string email;
-        int credit;
-        vector<string> listings; // List of item names created by the member
-        vector<string> reviews;  // List of reviews received by the member
-        vector<string> bids;     // List of bid details placed by the member
-    
-    public:
-        Member();
-        Member(string username, string email, int credit);
+class Item; 
 
-        // Getters
-        string getUsername();
-        string getEmail();
-        int getCredit();
+class Rating;
 
-        // Setters
-        void setUsername(string username);
-        void setEmail(string email);
-        void setCredit(int credit);
+class Member {
+private:
+    static int nextID;
+    int memberID;
+    string username;
+    string password;
+    string fullname;
+    string phoneNumber;
+    string email;
+    string IDType;
+    string IDNumber;
+    double rating;
+    int ratingCount;
+    int creditPoints;
 
-        // Methods
-        static bool usernameExist(string username);
-        void viewAndUpdateInfo(string username, string email);
-        void topUpCredit(int amount);
-        void addRatingAndReview(string rating, string review);
-        void createListing(string itemName);
-        vector<string> viewListing();
-        void placeBid(string listing, int bidAmount);
-        vector<string> searchItems(string keyword, const vector<string>& allListings);
-        static Member* getMember(string username);
-        static void login(string username, string email);
-        static void registerMember(string username, string email, int credit);
-        static void readData();
-        static void setMemberData(string filePath);q
+    vector<Item> listings;
+
+public:
+    Member(string username, string password, string fullname, string phoneNumber, 
+           string email, string IDType, string IDNumber, double rating , int ratingCount, int creditPoint);
+
+    static void writeToFile(const string& filePath, const string& content);
+
+    // Method
+    string toString() const;
+    vector<Member> readData(const string &filename);
+    void showInfo() const;
+    void updateInfo();
+    void topupCredit();
+    void createListing(const string& filePath);
+    void rateMember(double ratingValue);
+    void updateItemInFile(const string& filePath, const Item& updatedItem);
+    void updateMemberInFile(const string& filePath);
+    void placeBid(Item& item, const string& filePath, const string& membersFilePath);
+    void viewAllListings(const string& filePath);
+    void searchItems(const string& name, const string& category, int minBid, int maxBid);
+    string toLower(const string& str);
+
+    // Getters
+    int getMemberID() const;
+    string getUsername() const;
+    string getPassword() const; 
+    string getFullname() const;
+    string getPhoneNumber() const;
+    string getEmail() const;
+    string getIDType() const;
+    string getIDNumber() const;
+    double getRating() const;
+    int getRatingCount() const;
+    int getCreditPoints() const;
+    vector<Item> getListings() const;
+
+    // Setters
+    void setCreditPoints(int creditPoints);
 };
+
 #endif
