@@ -49,18 +49,46 @@ void Item::readItemData(){
     }
 }
 
-// Add a listing
+// Add listing
 void Item::addListing() {
-    std::cout << "Listing added: " << itemName << " in category " << category << "\n";
+    std::cout << "Item '" << itemName << "' listed in category '" << category << "' with starting bid of " << startingBid << " CP.\n";
 }
 
-// Display details
-void Item::displayDetails() {
-    std::cout << "Item Name: " << itemName << "\nCategory: " << category
+// Remove listing
+bool Item::removeListing() {
+    if (currentBid > 0) {
+        std::cout << "Cannot remove listing. Active bids exist for item: " << itemName << ".\n";
+        return false;
+    }
+    std::cout << "Listing '" << itemName << "' removed successfully.\n";
+    return true;
+}
+
+// Display limited details
+void Item::displayLimitedDetails() {
+    std::cout << "Item: " << itemName << " | Category: " << category << " | Description: " << description << "\n";
+}
+
+// Display full details
+void Item::displayFullDetails() {
+    std::cout << "Item: " << itemName << "\nCategory: " << category
               << "\nDescription: " << description
               << "\nStarting Bid: " << startingBid
-              << "\nBid Increment: " << bidIncrement
-              << "\nEnd Time (timestamp): " << endDateTime << "\n";
+              << "\nCurrent Bid: " << (currentBid > 0 ? std::to_string(currentBid) : "No bids yet")
+              << "\nMinimum Buyer Rating: " << ratingScore << "\n";
+}
+
+// Place bid
+bool Item::placeBid(Member* bidder, int bidAmount) {
+    if (bidAmount < startingBid || (currentBid > 0 && bidAmount < currentBid + bidIncrement)) {
+        std::cout << "Bid too low. Minimum increment is: " << bidIncrement << " CP.\n";
+        return false;
+    }
+
+    highestBidder = bidder;
+    currentBid = bidAmount;
+    std::cout << "Bid placed successfully by " << bidder->getUsername() << " for " << bidAmount << " CP.\n";
+    return true;
 }
 
 // Getters
@@ -69,3 +97,4 @@ std::string Item::getCategory() const { return category; }
 string Item::getDescription() const {return description;}
 string Item::getItemData() {return item_data;}
 const vector<Item>& Item::getItems() {return items;}
+

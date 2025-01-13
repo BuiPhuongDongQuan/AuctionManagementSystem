@@ -1,9 +1,8 @@
 #ifndef ITEM_H
 #define ITEM_H
-using namespace std;
-
 #include <string>
 #include <vector>
+using namespace std;
 
 class Item {
     protected:

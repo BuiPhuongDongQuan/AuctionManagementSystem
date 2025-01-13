@@ -17,7 +17,6 @@ class User{
         string IDNumber;
         int creditPoints;
         static vector<User> users;
-    
     public:
         User();
         User(string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber, int creditPoints );
