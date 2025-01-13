@@ -1,10 +1,11 @@
 #ifndef ITEM_H
 #define ITEM_H
-
 #include <string>
 #include <vector>
 
 class Item {
+protected:
+    static string item_data;
 private:
     std::string name;
     std::string category;
@@ -12,6 +13,7 @@ private:
     int startingBid;
     int bidIncrement;
     long long endDateAndTime; // Timestamp in YYYYMMDDHHMMSS format
+    static vector<Item> items;
 
 public:
     // Constructor
@@ -23,6 +25,8 @@ public:
     void addListing();
     void displayDetails() const;
     void displayLimitedDetails() const;
+    static void readItemData();
+    static void setItemData(string filePath);
     bool isTimerDone() const;
     void startTimer() const;
 
@@ -33,6 +37,13 @@ public:
 
     // Utility
     std::string toString() const;
+
+    // Getters
+    std::string getName() const;
+    std::string getCategory() const;
+    string getDescription()const;
+    static string getItemData();
+    static const vector<Item>& getItems();
 };
 
 #endif // ITEM_H
