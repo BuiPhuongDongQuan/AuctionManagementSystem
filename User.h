@@ -5,8 +5,9 @@
 using namespace std;
 
 class User{
-    private:
+    protected:
         static string user_data;
+    private:
         string username;
         string password;
         string fullname;
@@ -16,7 +17,6 @@ class User{
         string IDNumber;
         int creditPoints;
         static vector<User> users;
-    
     public:
         User();
         User(string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber, int creditPoints );
@@ -39,6 +39,6 @@ class User{
         static void login(string username, string password);
         static void guestRegister(string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber, int creditPoints);
         static void readData();
-        static void setUserData(string filPath);
+        static void setUserData(string filePath);
 };
 #endif
