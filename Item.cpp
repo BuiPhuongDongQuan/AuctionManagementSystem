@@ -8,6 +8,7 @@
 #include <iomanip>
 #include <thread>
 #include <ctime>
+#include <algorithm>
 
 using namespace std;
 
@@ -16,10 +17,9 @@ string Item::item_data = "";
 vector<Item>Item::items;
         
 // Constructor
-Item::Item(string name, string category, string description, 
-           int startingBid, int currentBid, int bidIncrement, 
-           int year, int month, int day, int hour, int minute, int second)
-    : name(name), category(category), description(description), 
+Item::Item(string itemID, string memberID, string name, string category, string description,
+           int startingBid, int currentBid, int bidIncrement, int year, int month, int day, int hour, int minute, int second)
+    : itemID(itemID), memberID(memberID), name(name), category(category), description(description),
       startingBid(startingBid), currentBid(currentBid), bidIncrement(bidIncrement) {
     endDateAndTime = (year * 10000000000LL) + (month * 100000000) + (day * 1000000) +
                      (hour * 10000) + (minute * 100) + second;
@@ -42,10 +42,12 @@ vector<Item> Item::readData(const string& filePath) {
     string line;
     while (getline(file, line)) {
         stringstream ss(line);
-        string name, category, description;
+        string itemID, memberID, name, category, description;
         int startingBid, currentBid, bidIncrement;
         long long endDateAndTime;
 
+        getline(ss, itemID, ',');
+        getline(ss, memberID, ',');
         getline(ss, name, ',');
         getline(ss, category, ',');
         getline(ss, description, ',');
@@ -64,7 +66,7 @@ vector<Item> Item::readData(const string& filePath) {
         int minute = (endDateAndTime / 100) % 100;
         int second = endDateAndTime % 100;
 
-        items.emplace_back(name, category, description, startingBid, currentBid, bidIncrement,
+        items.emplace_back(itemID, memberID, name, category, description, startingBid, currentBid, bidIncrement,
                            year, month, day, hour, minute, second);
     }
 
@@ -76,6 +78,8 @@ void Item::readItemData(){
     items.clear();
     int countLine = Function::countLine(item_data);
 
+    vector<string> itemID = Function::readCol(0, item_data, ';');
+    vector<string> memberID = Function::readCol(0, item_data, ';');
     vector<string> itemName = Function::readCol(0, item_data, ';');
     vector<string> category = Function::readCol(1, item_data, ';');
     vector<string> description = Function::readCol(2, item_data, ';');
@@ -104,7 +108,7 @@ void Item::readItemData(){
             int minute = (endDateTime / 100) % 100;
             int second = endDateTime % 100;
             
-            items.emplace_back(itemName[i], category[i], description[i], stoi(startingBid[i]), stoi(currentBid[i]), stoi(bidIncrement[i]), 
+            items.emplace_back(itemID[i], memberID[i], itemName[i], category[i], description[i], stoi(startingBid[i]), stoi(currentBid[i]), stoi(bidIncrement[i]), 
                             year, month, day, hour, minute, second);
         } catch (const exception& e) {
             cerr << "Error processing row " << i << ": " << e.what() << endl;
@@ -136,6 +140,41 @@ void Item::removeFromFile(const string& filePath, const string& itemNameToRemove
         }
     }
     file.close();
+}
+
+void Item::updateDataFile(const string& filePath) {
+    ofstream file(filePath);
+    if (!file.is_open()) {
+        cerr << "Error opening file for updating item data.\n";
+        return;
+    }
+
+    for (const auto& item : items) {
+        file << item.itemID << ";" << item.memberID << ";" << item.name << ";" << item.category << ";"
+             << item.description << ";" << item.currentBid << ";" << item.bidIncrement << ";"
+             << item.endDateAndTime << "\n";
+    }
+
+    file.close();
+    cout << "Item data updated successfully.\n";
+}
+
+bool Item::updateCurrentBidByID(const string& itemID, int newBid) {
+    for (auto& item : items) {
+        if (item.getItemID() == itemID) {
+            if (newBid > item.currentBid) {
+                item.currentBid = newBid;
+                cout << "Updated current bid for item ID: " << itemID << " to $" << newBid << endl;
+                updateDataFile(item_data);
+                return true;
+            } else {
+                cout << "New bid must be higher than the current bid.\n";
+                return false;
+            }
+        }
+    }
+    cout << "Item with ID " << itemID << " not found.\n";
+    return false;
 }
 
 // Generate item string
@@ -240,6 +279,8 @@ bool Item::removeListing() {
 
 
 // Getters
+string Item::getItemID() const { return itemID; }
+string Item::getMemberID() const { return memberID; }
 string Item::getName() const { return name; }
 string Item::getCategory() const { return category; }
 string Item::getDescription() const {return description;}
@@ -253,4 +294,9 @@ void Item::setCurrentBid(int currentBid) {
     this -> currentBid = currentBid;
 }
 
-
+void Item::removeItem(const string& itemID) {
+    items.erase(remove_if(items.begin(), items.end(),
+                          [&itemID](const Item& item) { return item.getItemID() == itemID; }),
+                items.end());
+    cout << "Item with ID " << itemID << " has been removed from the system.\n";
+}

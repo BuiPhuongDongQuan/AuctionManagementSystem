@@ -2,6 +2,7 @@
 #include <iostream>
 #include <fstream>
 #include <sstream>
+#include <algorithm>
 using namespace std;
 
 // Constructor
@@ -21,17 +22,15 @@ void Auction::startAuction() {
 // End the auction
 void Auction::endAuction() {
     if (!isAuctionActive) {
-        cout << "Auction is not active." << endl;
+        cout << "Auction is not active.\n";
         return;
     }
     isAuctionActive = false;
-    cout << "Auction for item '" << auctionedItem.getName() << "' has ended!" << endl;
+    cout << "Auction for item '" << auctionedItem.getName() << "' has ended!\n";
     if (!highestBidder.empty()) {
-        cout << "Winner: " << highestBidder << " with a bid of $" << highestBid << "." << endl;
-        // Transfer credit points between buyer and seller
-        // This assumes the Member class has credit point management
+        cout << "Winner: " << highestBidder << " with a bid of $" << highestBid << ".\n";
     } else {
-        cout << "No bids were placed for this auction." << endl;
+        cout << "No bids were placed for this auction.\n";
     }
 }
 
@@ -83,6 +82,38 @@ void Auction::applyAutoBids() {
                 cout << "Automatic bid of $" << nextBid << " placed by " << username << "." << endl;
             }
         }
+    }
+}
+
+void Auction::deductWinnerCreditsAndRemoveItem(Member& winner, std::vector<Item>& itemList) {
+    if (highestBidder.empty()) {
+        cout << "No winner for this auction.\n";
+        return;
+    }
+
+    if (winner.getUsername() != highestBidder) {
+        cout << "Error: Winner details do not match the highest bidder.\n";
+        return;
+    }
+
+    if (winner.getCreditPoints() < highestBid) {
+        cout << "Error: Winner does not have enough credits to complete the transaction.\n";
+        return;
+    }
+
+    // Deduct credits from the winner
+    winner.setCreditPoints(winner.getCreditPoints() - highestBid);
+    winner.updateMemberInFile("members.txt");
+
+    // Remove the item from the system
+    auto it = std::find_if(itemList.begin(), itemList.end(),
+                           [this](const Item& item) { return item.getItemID() == auctionedItem.getItemID(); });
+
+    if (it != itemList.end()) {
+        itemList.erase(it);
+        cout << "Item with ID " << auctionedItem.getItemID() << " has been removed from the system.\n";
+    } else {
+        cout << "Error: Item not found in the system.\n";
     }
 }
 

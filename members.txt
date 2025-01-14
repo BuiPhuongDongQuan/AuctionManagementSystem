@@ -6,3 +6,5 @@
 1,user1,pass123,John Doe,1234567890,john@example.com,IDCard,A12345678,4.54545,11,180
 1,user1,pass123,John Doe,1234567890,john@example.com,IDCard,A12345678,4.54545,11,180
 1,user1,pass123,John Doe,1234567890,john@example.com,IDCard,A12345678,4.54545,11,180
+954201440,user1,pass123,John Doe,1234567890,john@example.com,IDCard,A12345678,4.54545,11,-2147483493
+-834669456,user1,pass123,John Doe,1234567890,john@example.com,IDCard,A12345678,4.54545,11,377

@@ -28,6 +28,7 @@ public:
     void endAuction();
     bool placeBid(const Member& member, int bidAmount);
     bool setAutoBidLimit(const Member& member, int bidLimit);
+     void deductWinnerCreditsAndRemoveItem(Member& winner, std::vector<Item>& itemList);
 
     // Auction Details
     void displayAuctionDetails() const;

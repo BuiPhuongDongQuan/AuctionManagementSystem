@@ -12,6 +12,8 @@ class Item {
 protected:
     static string item_data;
 private:
+    string itemID;
+    string memberID;
     string name;
     string category;
     string description;
@@ -23,11 +25,12 @@ private:
 
 public:
     // Constructor
-    Item(string name, string category, string description, 
+    Item(string itemID, string memberID, string name, string category, string description, 
         int startingBid, int currentBid, int bidIncrement, 
         int year, int month, int day, int hour, int minute, int second);
         
     // Methods
+    static bool updateCurrentBidByID(const string& itemID, int newBid);
     void addListing();
     void displayDetails() const;
     void displayLimitedDetails() const;
@@ -40,11 +43,15 @@ public:
     static void writeToFile(const string& filePath, const string& content);
     static vector<Item> readData(const string& filePath);
     static void removeFromFile(const string& filePath, const string& itemNameToRemove);
+    static void updateDataFile(const string& filePath);
+    static void removeItem(const string& itemID);
 
     // Utility
     string toString() const;
 
     // Getters
+    string getItemID() const;
+    string getMemberID() const;
     string getName() const;
     string getCategory() const;
     string getDescription()const;

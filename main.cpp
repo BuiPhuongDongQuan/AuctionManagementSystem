@@ -131,6 +131,27 @@ int main()
         cout << "No items available for bidding.\n";
     }
 
+        // Simulate reading items from file
+    items = Item::readData(itemsFile);
+    if (!items.empty()) {
+        cout << "\n=== Update Current Bid by Item ID ===\n";
+
+        // Display the first item
+        const string itemID = items[0].getItemID();
+        cout << "Original bid for item ID " << itemID << ": $" << items[0].getCurrentBid() << endl;
+
+        // Update the current bid
+        bool updated = Item::updateCurrentBidByID(itemID, 1500);
+
+        if (updated) {
+            cout << "New bid for item ID " << itemID << ": $" << items[0].getCurrentBid() << endl;
+        } else {
+            cout << "Failed to update the bid.\n";
+        }
+    } else {
+        cout << "No items available for updating bids.\n";
+    }
+
     // Rate the member
     cout << "\nRating the member:\n";
     member4.rateMember(5.0);
@@ -170,6 +191,8 @@ int main()
 
         // End the auction
         auction.endAuction();
+        auction.deductWinnerCreditsAndRemoveItem(buyer2, items);
+        auction.displayAuctionDetails();
 
         // Rate the participants
         auction.rateParticipants(member4, buyer2, 5.0, 4.8);

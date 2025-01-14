@@ -186,7 +186,7 @@ void Member::topupCredit(const string& membersFilePath) {
 
 // Creating Listing Items
 void Member::createListing(const string& filePath) {
-    string name, category, description;
+    string itemID, memberID, name, category, description;
     int startingBid, currentBid, bidIncrement;
     int year, month, day, hour, minute, second;
 
@@ -221,7 +221,7 @@ void Member::createListing(const string& filePath) {
     cin >> hour >> minute >> second;
 
     // Create the Item
-    Item newItem(name, category, description, startingBid, currentBid, bidIncrement,
+    Item newItem(itemID, memberID, name, category, description, startingBid, currentBid, bidIncrement,
                  year, month, day, hour, minute, second);
 
     // Convert item to string and save it to a file
