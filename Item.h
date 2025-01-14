@@ -15,6 +15,7 @@ private:
     string name;
     string category;
     string description;
+    int startingBid; 
     int currentBid;
     int bidIncrement;
     long long endDateAndTime; // Timestamp in YYYYMMDDHHMMSS format
@@ -22,10 +23,10 @@ private:
 
 public:
     // Constructor
-    Item(string name, string category, string description,
-         int currentBid, int bidIncrement, int year, int month,
-         int day, int hour, int minute, int second);
-
+    Item(string name, string category, string description, 
+        int startingBid, int currentBid, int bidIncrement, 
+        int year, int month, int day, int hour, int minute, int second);
+        
     // Methods
     void addListing();
     void displayDetails() const;
@@ -70,7 +71,7 @@ public:
     }
 
     // Setters
-    void setItemData(string filePath);
+    static void setItemData(string filePath);
     void setCurrentBid(int currentBid);
 };
 

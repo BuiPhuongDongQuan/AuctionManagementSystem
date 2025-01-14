@@ -33,14 +33,12 @@ public:
     Member(string username, string password, string fullname, string phoneNumber, 
            string email, string IDType, string IDNumber, double rating , int ratingCount, int creditPoint);
 
-    static void writeToFile(const string& filePath, const string& content);
-
     // Method
     string toString() const;
     vector<Member> readData(const string &filename);
     void showInfo() const;
-    void updateInfo();
-    void topupCredit();
+    void updateInfo(const string& filePath);
+    void topupCredit(const string& membersFilePath);
     void createListing(const string& filePath);
     void rateMember(double ratingValue);
     void updateItemInFile(const string& filePath, const Item& updatedItem);
@@ -65,6 +63,13 @@ public:
     vector<Item> getListings() const;
 
     // Setters
+    void setFullName(string fullname);
+    void setUserName(string username);
+    void setPassword(string password);
+    void setEmail(string email);
+    void setPhoneNumber(string phoneNumber);
+    void setIDType(string IDType);
+    void setIDNumber(string IDNumber);
     void setCreditPoints(int creditPoints);
 };
 
