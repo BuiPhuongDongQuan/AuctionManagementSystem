@@ -13,7 +13,7 @@
 
 //     // Test constructor and display details
 //     cout << "Testing constructor and displayDetails()\n";
-//     Item item("Laptop", "Electronics", "A high-end gaming laptop", 
+//     Item item("Laptop", "Electronics", "A high-end gaming laptop",
 //             1000, 1000, 50, 2025, 1, 15, 12, 0, 0);
 //     item.displayDetails();
 
@@ -77,11 +77,13 @@
 #include <vector>
 #include "Member.h"
 #include "Item.h"
+#include "Auction.h"
 #include "functions/Function.h"
 
 using namespace std;
 
-int main() {
+int main()
+{
     // File paths
     const string membersFile = "members.txt";
     const string itemsFile = "item.txt";
@@ -119,10 +121,13 @@ int main() {
 
     // Place a bid on an item
     vector<Item> items = Item::readData(itemsFile);
-    if (!items.empty()) {
+    if (!items.empty())
+    {
         cout << "\nPlacing a bid on the first item:\n";
-        member4.placeBid(items[1], itemsFile, membersFile);
-    } else {
+        member4.placeBid(items[0], itemsFile, membersFile);
+    }
+    else
+    {
         cout << "No items available for bidding.\n";
     }
 
@@ -133,6 +138,57 @@ int main() {
 
     // Update the member in the file
     member4.updateMemberInFile(membersFile);
+
+    // --- Auction Testing Starts Here ---
+    if (!items.empty())
+    {
+        cout << "\n=== Auction Testing ===\n";
+
+        // Create an auction for the first item
+        Auction auction(items[0]);
+
+        // Start the auction
+        auction.startAuction();
+
+        // Create test members for bidding
+        Member buyer1("buyer1", "pass123", "Buyer One", "1234567890", "buyer1@example.com", "ID", "B123", 4.7, 5, 1000);
+        Member buyer2("buyer2", "pass123", "Buyer Two", "1234567891", "buyer2@example.com", "ID", "B124", 4.8, 7, 1500);
+
+        // Place manual bids
+        auction.placeBid(buyer1, 1100);
+        auction.placeBid(buyer2, 1200);
+
+        // Set auto-bid limits
+        auction.setAutoBidLimit(buyer1, 1300);
+        auction.setAutoBidLimit(buyer2, 1400);
+
+        // Trigger auto-bids with a manual bid
+        auction.placeBid(buyer1, 1250);
+
+        // Display auction details
+        auction.displayAuctionDetails();
+
+        // End the auction
+        auction.endAuction();
+
+        // Rate the participants
+        auction.rateParticipants(member4, buyer2, 5.0, 4.8);
+
+        // Save auction data to file
+        auction.saveAuctionData("auction_data.txt");
+
+        // Load auction data from file
+        try
+        {
+            Auction loadedAuction = Auction::loadAuctionData("auction_data.txt", items);
+            cout << "\nLoaded Auction Details:\n";
+            loadedAuction.displayAuctionDetails();
+        }
+        catch (const runtime_error &e)
+        {
+            cerr << e.what() << endl;
+        }
+    }
 
     return 0;
 }
