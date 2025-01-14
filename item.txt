@@ -1,2 +1,6 @@
-ItemName;Category;Description;StartingBid;BidIncrement;EndDateAndTime;RatingScore
-SamSungA52;Electronic Device;abcdef;10000;500;1-1-2025;3,4 
+Iphone,Electronic,High-Performance,200,300,20,20250115120000
+Iphone 14,Electronic,High-Performance,200,0,20,20250115140000
+SamsungA52,High,HighPerfrom,200,200,20,20250614264448
+Iphone15,Electronic,HighPerformance,200,200,20,20250112120000
+Iphone16,Electronic,High_performance,300,300,10,20251211120000
+Samsung ZFlip,SmartPhone,High-Performance,200,200,12,20251211120000

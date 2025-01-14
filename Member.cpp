@@ -15,7 +15,7 @@ using namespace std;
 // Constructor
 Member::Member(string username = "", string password = "", string fullname = "", string phoneNumber = "", 
     string email = "", string IDType = "", string IDNumber = "", double rating = 0.0, int ratingCount = 0, int creditPoints = 0)
-    : memberID(nextID++) ,username(username), password(password), fullname(fullname), phoneNumber(phoneNumber), email(email),
+    : memberID(memberID) ,username(username), password(password), fullname(fullname), phoneNumber(phoneNumber), email(email),
     IDType(IDType), IDNumber(IDNumber), rating(rating), ratingCount(ratingCount),creditPoints(creditPoints) {}
 
 string Member::toString() const {
@@ -83,7 +83,7 @@ void Member::showInfo() const {
 }
 
 // Update member informations
-void Member::updateInfo() {
+void Member::updateInfo(const std::string& membersFilePath) {
     cout << "========= UPDATE MEMBER INFORMATION =========\n";
     cout << "Select the field you want to update:\n";
     cout << "1. Full Name\n";
@@ -105,30 +105,44 @@ void Member::updateInfo() {
         case 1:
             cout << "Enter new full name (current: " << fullname << "): ";
             getline(cin, fullname);
+            setFullName(fullname);
+            updateMemberInFile(membersFilePath);
             break;
         case 2:
             cout << "Enter new username (current: " << username << "): ";
             getline(cin, username);
+            setUserName(username);
+            updateMemberInFile(membersFilePath);
             break;
         case 3:
             cout << "Enter new password: ";
             getline(cin, password);
+            setPassword(password);
+            updateMemberInFile(membersFilePath);
             break;
         case 4:
             cout << "Enter new email (current: " << email << "): ";
             getline(cin, email);
+            setEmail(email);
+            updateMemberInFile(membersFilePath);
             break;
         case 5:
             cout << "Enter new phone number (current: " << phoneNumber << "): ";
             getline(cin, phoneNumber);
+            setPhoneNumber(phoneNumber);
+            updateMemberInFile(membersFilePath);
             break;
         case 6:
             cout << "Enter new ID type (current: " << IDType << "): ";
             getline(cin, IDType);
+            setIDType(IDType);
+            updateMemberInFile(membersFilePath);
             break;
         case 7:
             cout << "Enter new ID number (current: " << IDNumber << "): ";
             getline(cin, IDNumber);
+            setIDNumber(IDNumber);
+            updateMemberInFile(membersFilePath);
             break;
         case 8:
             cout << "Exiting update menu.\n";
@@ -145,7 +159,7 @@ void Member::updateInfo() {
 }
 
 // Topping up credit
-void Member::topupCredit() {
+void Member::topupCredit(const string& membersFilePath) {
     int pointsToTopup;
     char confirmation;
 
@@ -163,6 +177,8 @@ void Member::topupCredit() {
     if (confirmation == 'Y' || confirmation == 'y') {
         creditPoints += pointsToTopup;
         cout << "Top-up successful! Your new credit balance is: " << creditPoints << " points.\n";
+        setCreditPoints(creditPoints);
+        updateMemberInFile(membersFilePath);
     } else {
         cout << "Top-up canceled.\n";
     }
@@ -171,32 +187,42 @@ void Member::topupCredit() {
 // Creating Listing Items
 void Member::createListing(const string& filePath) {
     string name, category, description;
-    int currentBid, bidIncrement;
+    int startingBid, currentBid, bidIncrement;
     int year, month, day, hour, minute, second;
 
     cout << "===== Create New Listing =====\n";
 
     // Get item details from the user
     cout << "Enter item name: ";
+    cin.ignore(); // Clear leftover newline from input buffer
     getline(cin, name);
+
     cout << "Enter category: ";
     getline(cin, category);
+
     cout << "Enter description: ";
     getline(cin, description);
+
     cout << "Enter starting bid: ";
-    cin >> currentBid;
+    cin >> startingBid;
+    currentBid = startingBid;
+
     cout << "Enter bid increment: ";
     cin >> bidIncrement;
+
+    // Clear the buffer before getting the next set of inputs
+    cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
     // Get end date and time
     cout << "Enter end date (YYYY MM DD): ";
     cin >> year >> month >> day;
+
     cout << "Enter end time (HH MM SS): ";
     cin >> hour >> minute >> second;
 
     // Create the Item
-    Item newItem(name, category, description, currentBid, bidIncrement,
-                    year, month, day, hour, minute, second);
+    Item newItem(name, category, description, startingBid, currentBid, bidIncrement,
+                 year, month, day, hour, minute, second);
 
     // Convert item to string and save it to a file
     try {
@@ -361,8 +387,7 @@ string Member::toLower(const string& str) {
 // Method to search items based on name, category, or credit point range
 void Member::searchItems(const string& name, const string& category, int minBid, int maxBid) {
     vector<Item> results;
-    Item::readItemData();
-    const auto& listings = Item::getItems();
+    vector<Item> listings = Item::readData("item.txt"); // This should contain the actual list of items to search from
 
     for (const auto& item : listings) {
         bool matchName = name.empty() || toLower(item.getName()).find(toLower(name)) != string::npos;
@@ -411,6 +436,24 @@ vector<Item> Member::getListings() const { return listings; }
 void Member::setCreditPoints(int creditPoints) {
     this -> creditPoints = creditPoints;
 }
-
-
-int Member::nextID = 1;
+void Member::setFullName(string fullname){
+    this -> fullname = fullname;
+}
+void Member::setUserName(string username){
+    this -> username = username;
+}
+void Member::setPassword(string password){
+    this -> password = password;
+}
+void Member::setEmail(string email){
+    this -> email = email;
+}
+void Member::setPhoneNumber(string phoneNumber){
+    this -> phoneNumber = phoneNumber;
+}
+void Member::setIDType(string IDType){
+    this -> IDType = IDType;
+}
+void Member::setIDNumber(string IDNumber){
+    this -> IDNumber = IDNumber;
+}

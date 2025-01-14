@@ -1,0 +1,3 @@
+1,user1,pass123,Bim,1234567890,john@example.com,IDCard,A12345678,4.5,10,100
+2,Bimbim,54611516,Bimbim,1234567890,john@example.com,IDCard,A12345678,4.5,10,100
+0,user1,123456789164,John Doe,1234567890,john@example.com,IDCard,A12345678,4.54545,11,500
