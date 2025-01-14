@@ -1,49 +1,59 @@
 #ifndef ITEM_H
 #define ITEM_H
+
 #include <string>
 #include <vector>
+#include <iomanip>
+using namespace std;
 
 class Item {
 protected:
-    static string item_data;
+    static string item_data; // Path to the item data file
+
 private:
-    std::string name;
-    std::string category;
-    std::string description;
-    int startingBid;
+    string name;
+    string category;
+    string description;
+    int currentBid;
     int bidIncrement;
     long long endDateAndTime; // Timestamp in YYYYMMDDHHMMSS format
-    static vector<Item> items;
+    static vector<Item> items; // Container for all items
 
 public:
-    // Constructor
-    Item(std::string name = "", std::string category = "", std::string description = "",
-         int startingBid = 0, int bidIncrement = 0, int year = 0, int month = 0,
-         int day = 0, int hour = 0, int minute = 0, int second = 0);
+    // Constructors
+    Item(string name, string category, string description,
+         int currentBid, int bidIncrement, int year, int month,
+         int day, int hour, int minute, int second);
+
+    // New constructor to handle timestamp directly
+    Item(string name, string category, string description, int currentBid, int bidIncrement, long long endDateAndTime);
 
     // Methods
     void addListing();
     void displayDetails() const;
     void displayLimitedDetails() const;
     static void readItemData();
-    static void setItemData(string filePath);
     bool isTimerDone() const;
     void startTimer() const;
-
-    // File I/O
-    static void writeToFile(const std::string& filePath, const std::string& content);
-    static std::vector<Item> readData(const std::string& filePath);
-    static void removeFromFile(const std::string& filePath, const std::string& itemNameToRemove);
+    bool removeListing();
 
     // Utility
-    std::string toString() const;
+    string toString() const;
+    string getShowTime() const;
 
     // Getters
-    std::string getName() const;
-    std::string getCategory() const;
-    string getDescription()const;
+    string getName() const;
+    string getCategory() const;
+    string getDescription() const;
+    int getCurrentBid() const;
+    int getBidIncrement() const;
+    long long getEndDateAndTime() const;
     static string getItemData();
     static const vector<Item>& getItems();
+
+    // Setters
+    static void setItemData(string filePath);
+    void setCurrentBid(int currentBid);
 };
 
 #endif // ITEM_H
