@@ -18,8 +18,8 @@ class Menu{
         static Rating rating;
         
         // File path
-        const string membersFile = "members.txt";
-        const string itemsFile = "item.txt";
+        static string user_data;
+        static string item_data;
 
         // Menu-related functions
         static int handleUserInput(int min, int max);

@@ -4,7 +4,7 @@
 using namespace std;
 
 // Static members
-string User::user_data = "";
+string User::user_data = "members.txt";
 vector<User>User::users;
 
 User::User(){}
@@ -12,10 +12,6 @@ User::User(){}
 User::User(string username, string password, string fullname, string phoneNumber, string email,string IDType, string IDNumber, int creditPoints)
     : username(username), password(password), fullname(fullname), phoneNumber(phoneNumber), email(email), IDType(IDType), IDNumber(IDNumber), creditPoints(creditPoints){}
 
-// Set user data file path
-void User::setUserData(string filePath) {
-    user_data = filePath;
-}
 
 // Getters
 string User::getUsername(){

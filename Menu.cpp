@@ -10,7 +10,8 @@ Admin Menu::admin;
 Guest Menu::guest;
 Member Menu::member;
 Item Menu::item;
-
+string Menu::user_data = "members.txt";
+string Menu::item_data = "item.txt";
 // User input their choice
 int Menu::handleUserInput(int min, int max){
     int choice;
@@ -53,7 +54,7 @@ void Menu::menuDisplay(){
     cout << "XXXXXXX, Student Name\n\n";
     cout << "-----Choose Your Role-----\n";
     cout << "Please let us know who you are: \n";
-    cout << "1. Guest\n 2. Member\n 3. Admin\n";
+    cout << "1. Guest  2. Member  3. Admin\n";
     int choice = Menu::handleUserInput(1, 3);
 
     switch (choice)
@@ -91,11 +92,11 @@ void Menu::adminLoginMenu(){
     cin >> username;
     cout << "Enter your password: ";
     cin >> password;
-    User::readData();
+    cin.ignore(); // Clear buffer
     if(username == "admin" && password == "Admin123@!"){
         adminDashboard();
     }else{
-        cout << "Wrong username or password, please login again!";
+        cout << "Wrong username or password, please login again!\n";
         adminLoginMenu();
     }
 }
@@ -109,12 +110,12 @@ void Menu::adminDashboard(){
     switch (choice)
     {
     case 1:
-        Admin::viewItemData();
+        Admin::viewItemData("item.txt");
         adminDashboard();
         break;
     
     case 2:
-        Admin::viewMemberInfo();
+        Admin::viewMemberInfo("user.txt");
         adminDashboard();
         break;
     }

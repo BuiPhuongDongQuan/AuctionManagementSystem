@@ -13,5 +13,6 @@ class Function{
         static int countLine(string filePath);
         static vector<string> readCol(int col, const string& filePath, char delimiter);
         static void writeToFile(string filePath, string content);
+        static void readAllLine(string filePath);
 };
 #endif

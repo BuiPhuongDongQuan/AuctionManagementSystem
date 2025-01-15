@@ -39,6 +39,5 @@ class User{
         static void login(string username, string password);
         static void guestRegister(string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber, int creditPoints);
         static void readData();
-        static void setUserData(string filePath);
 };
 #endif
