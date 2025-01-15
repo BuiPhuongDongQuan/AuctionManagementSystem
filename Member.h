@@ -44,7 +44,7 @@ public:
     void updateItemInFile(const string& filePath, const Item& updatedItem);
     void updateMemberInFile(const string& filePath);
     void placeBid(Item& item, const string& filePath, const string& membersFilePath);
-    void viewAllListings(const string& filePath);
+    void viewListings(const string& filePath);
     void searchItems(const string& name, const string& category, int minBid, int maxBid);
     string toLower(const string& str);
 
