@@ -78,15 +78,15 @@ void Item::readItemData(){
     items.clear();
     int countLine = Function::countLine(item_data);
 
-    vector<string> itemID = Function::readCol(0, item_data, ';');
-    vector<string> memberID = Function::readCol(0, item_data, ';');
-    vector<string> itemName = Function::readCol(0, item_data, ';');
-    vector<string> category = Function::readCol(1, item_data, ';');
-    vector<string> description = Function::readCol(2, item_data, ';');
-    vector<string> startingBid = Function::readCol(3, item_data, ';');
-    vector<string> currentBid = Function::readCol(4, item_data, ';');
-    vector<string> bidIncrement = Function::readCol(5, item_data, ';');
-    vector<string> endDateAndTime = Function::readCol(6, item_data, ';');
+    vector<string> itemID = Function::readCol(0, item_data, ',');
+    vector<string> memberID = Function::readCol(1, item_data, ',');
+    vector<string> itemName = Function::readCol(2, item_data, ',');
+    vector<string> category = Function::readCol(3, item_data, ',');
+    vector<string> description = Function::readCol(4, item_data, ',');
+    vector<string> startingBid = Function::readCol(5, item_data, ',');
+    vector<string> currentBid = Function::readCol(6, item_data, ',');
+    vector<string> bidIncrement = Function::readCol(7, item_data, ',');
+    vector<string> endDateAndTime = Function::readCol(8, item_data, ',');
     // vector<string> ratingPoints = Function::readCol(7, item_data, ';');
 
     // Ensure all columns have the same number of elements
@@ -150,8 +150,8 @@ void Item::updateDataFile(const string& filePath) {
     }
 
     for (const auto& item : items) {
-        file << item.itemID << ";" << item.memberID << ";" << item.name << ";" << item.category << ";"
-             << item.description << ";" << item.currentBid << ";" << item.bidIncrement << ";"
+        file << item.itemID << "," << item.memberID << "," << item.name << "," << item.category << ","
+             << item.description << "," << item.startingBid << "," << item.currentBid << "," << item.bidIncrement << ","
              << item.endDateAndTime << "\n";
     }
 
@@ -180,7 +180,7 @@ bool Item::updateCurrentBidByID(const string& itemID, int newBid) {
 // Generate item string
 string Item::toString() const {
     stringstream ss;
-    ss << name << "," << category << "," << description << ","
+    ss << itemID << "," << memberID << "," << name << "," << category << "," << description << ","
        << startingBid << "," << currentBid << "," << bidIncrement << "," << endDateAndTime << "\n";
     return ss.str();
 }
