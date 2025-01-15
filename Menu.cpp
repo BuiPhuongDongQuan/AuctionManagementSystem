@@ -124,6 +124,23 @@ void Menu::adminDashboard(){
 // Guest Dashboard
 
 void Menu::guestDashboard(){
+    cout << "-----Welcome-----\n";
+    cout << "1. View Product Information\n";
+    cout << "2. Register\n";
+    int choice = Menu::handleUserInput(1, 2);
+    switch (choice)
+    {
+    case 1:
+        Guest::viewItem(item_data);
+        break;
+    
+    case 2:
+        registerMenu();
+        break;
+    }
+}
+
+void Menu::registerMenu(){
     string username, password, fullname, phoneNumber, email, IDType, IDNumber;
     cout << "-----Register-----\n";
     cout << "Enter your username: ";

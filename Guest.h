@@ -7,6 +7,6 @@ using namespace std;
 class Guest: public User{
     public:
         Guest();        
-        void viewItem() const;
+        static void viewItem(string filePath);
 };
 #endif
