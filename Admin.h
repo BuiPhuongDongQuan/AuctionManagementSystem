@@ -12,7 +12,7 @@ class Admin : public User{
         // Admin(string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber, int creditPoints);
         
         // Methods
-        void viewMemberInfo() const;
-        void viewItemData() const;
+        static void viewMemberInfo();
+        static void viewItemData();
 };
 #endif

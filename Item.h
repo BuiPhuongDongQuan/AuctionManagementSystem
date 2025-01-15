@@ -23,6 +23,7 @@ private:
 
 public:
     // Constructor
+    Item();
     Item(string name, string category, string description, 
         int startingBid, int currentBid, int bidIncrement, 
         int year, int month, int day, int hour, int minute, int second);

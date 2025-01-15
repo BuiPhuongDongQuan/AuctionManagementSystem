@@ -30,6 +30,7 @@ private:
     vector<Item> listings;
 
 public:
+    Member();
     Member(string username, string password, string fullname, string phoneNumber, 
            string email, string IDType, string IDNumber, double rating , int ratingCount, int creditPoint);
 

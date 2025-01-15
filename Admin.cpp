@@ -7,7 +7,7 @@ using namespace std;
 // Admin::Admin() : User(){}
 // Admin::Admin(string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber, int creditPoints) : User(username, password, fullname, phoneNumber, email, IDType, IDNumber, creditPoints){}
 
-void Admin::viewMemberInfo() const{
+void Admin::viewMemberInfo(){
     readData();
     ifstream file(User::user_data);
     if(!file.is_open()){
@@ -27,7 +27,7 @@ void Admin::viewMemberInfo() const{
     file.close();
 }
 
-void Admin::viewItemData() const{
+void Admin::viewItemData(){
     Item::readItemData();
     ifstream file(Item::getItemData());
     if(!file.is_open()){

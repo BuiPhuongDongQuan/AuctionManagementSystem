@@ -75,8 +75,14 @@
 
 #include <iostream>
 #include <vector>
+#include "User.h"
+#include "Admin.h"
+#include "Guest.h"
 #include "Member.h"
+#include "Rating.h"
 #include "Item.h"
+#include "Member.h"
+#include "Menu.h"
 #include "functions/Function.h"
 
 using namespace std;
@@ -86,53 +92,55 @@ int main() {
     const string membersFile = "members.txt";
     const string itemsFile = "item.txt";
 
-    // Create a Member
-    Member member4("user1", "pass123", "John Doe", "1234567890", "john@example.com", "IDCard", "A12345678", 4.5, 10, 100);
-    Function::writeToFile(membersFile, member4.toString());
-    cout << "Member created and saved to file.\n";
-
-    // Display member information
-    cout << "Displaying member information:\n";
-    member4.showInfo();
-
-    // Update member information
-    cout << "\nUpdating member information:\n";
-    member4.updateInfo(membersFile);
-    member4.showInfo();
-
-    // Top up credits
-    cout << "\nTopping up credit points:\n";
-    member4.topupCredit(membersFile);
-    member4.showInfo();
-
-    // Create a listing
-    cout << "\nCreating a listing:\n";
-    member4.createListing(itemsFile);
-
-    // View all listings
-    cout << "\nViewing all listings:\n";
-    member4.viewAllListings(itemsFile);
-
-    // Search for items
-    cout << "\nSearching for items:\n";
-    member4.searchItems("Iphone15", "Electronic", -1, -1);
-
-    // Place a bid on an item
-    vector<Item> items = Item::readData(itemsFile);
-    if (!items.empty()) {
-        cout << "\nPlacing a bid on the first item:\n";
-        member4.placeBid(items[1], itemsFile, membersFile);
-    } else {
-        cout << "No items available for bidding.\n";
-    }
-
-    // Rate the member
-    cout << "\nRating the member:\n";
-    member4.rateMember(5.0);
-    member4.showInfo();
-
-    // Update the member in the file
-    member4.updateMemberInFile(membersFile);
-
+    Menu::menuDisplay();
     return 0;
+    // Create a Member
+    // Member member4("user1", "pass123", "John Doe", "1234567890", "john@example.com", "IDCard", "A12345678", 4.5, 10, 100);
+    // Function::writeToFile(membersFile, member4.toString());
+    // cout << "Member created and saved to file.\n";
+
+    // // Display member information
+    // cout << "Displaying member information:\n";
+    // member4.showInfo();
+
+    // // Update member information
+    // cout << "\nUpdating member information:\n";
+    // member4.updateInfo(membersFile);
+    // member4.showInfo();
+
+    // // Top up credits
+    // cout << "\nTopping up credit points:\n";
+    // member4.topupCredit(membersFile);
+    // member4.showInfo();
+
+    // // Create a listing
+    // cout << "\nCreating a listing:\n";
+    // member4.createListing(itemsFile);
+
+    // // View all listings
+    // cout << "\nViewing all listings:\n";
+    // member4.viewAllListings(itemsFile);
+
+    // // Search for items
+    // cout << "\nSearching for items:\n";
+    // member4.searchItems("Iphone15", "Electronic", -1, -1);
+
+    // // Place a bid on an item
+    // vector<Item> items = Item::readData(itemsFile);
+    // if (!items.empty()) {
+    //     cout << "\nPlacing a bid on the first item:\n";
+    //     member4.placeBid(items[1], itemsFile, membersFile);
+    // } else {
+    //     cout << "No items available for bidding.\n";
+    // }
+
+    // // Rate the member
+    // cout << "\nRating the member:\n";
+    // member4.rateMember(5.0);
+    // member4.showInfo();
+
+    // // Update the member in the file
+    // member4.updateMemberInFile(membersFile);
+
+    // return 0;
 }
