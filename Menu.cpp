@@ -60,7 +60,7 @@ void Menu::menuDisplay(){
     switch (choice)
     {
     case 1:
-        // guestDasboard();
+        guestDashboard();
         break;
     
     case 2:
@@ -119,4 +119,33 @@ void Menu::adminDashboard(){
         adminDashboard();
         break;
     }
+}
+
+// Guest Dashboard
+
+void Menu::guestDashboard(){
+    string username, password, fullname, phoneNumber, email, IDType, IDNumber;
+    cout << "-----Register-----\n";
+    cout << "Enter your username: ";
+    cin >> username;
+    cin.ignore();
+    cout << "Enter your password: ";
+    cin >> password;
+    cin.ignore();
+    cout << "Enter your full name: ";
+    getline(cin,fullname);
+    cout << "Enter your phone number: ";
+    cin >> phoneNumber;
+    cin.ignore();
+    cout << "Enter your email: ";
+    cin >> email;
+    cin.ignore();
+    cout << "Enter your ID Type: ";
+    cin >> IDType;
+    cin.ignore();   
+    cout << "Enter your ID Number: ";
+    cin >> IDNumber;
+    cin.ignore();
+
+    User::guestRegister(username, password, fullname, phoneNumber, email, IDType, IDNumber);
 }

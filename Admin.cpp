@@ -31,12 +31,22 @@ void Admin::viewMemberInfo(string filePath){
         cout << string(160, '-') << endl; // Divider line for the table
 
         string line;
-
+        bool isHeader = true;
 
         while (getline(file, line)) {
+            // Skip the header row
+            if (isHeader) {
+                isHeader = false;
+                continue;
+            }
+
+            // Skip blank lines
+            if (line.empty()) {
+                continue;
+            }
 
             istringstream iss(line);
-            string ID,username, password, fullName, phoneNumber, email, idType, idNumber, ratingCount, rating, creditPoints;
+            string ID,username, password, fullName, phoneNumber, email, idType, idNumber, ratedTimes, rating, creditPoints;
 
             // Parse line (comma-separated values)
             if (getline(iss, ID, ',') &&
@@ -48,7 +58,7 @@ void Admin::viewMemberInfo(string filePath){
                 getline(iss, idType, ',') &&
                 getline(iss, idNumber, ',') &&
                 getline(iss, rating, ',') &&
-                getline(iss, ratingCount, ',') &&
+                getline(iss, ratedTimes, ',') &&
                 getline(iss, creditPoints)) {
 
                 // Print parsed data in formatted columns
@@ -61,7 +71,7 @@ void Admin::viewMemberInfo(string filePath){
                      << setw(15) << idType
                      << setw(15) << idNumber
                      << setw(15) << rating
-                     << setw(15) << ratingCount
+                     << setw(15) << ratedTimes
                      << setw(15) << creditPoints
                      << endl;
             } else {
