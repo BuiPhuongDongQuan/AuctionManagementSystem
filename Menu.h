@@ -29,5 +29,6 @@ class Menu{
         static void registerMenu();
         static void adminDashboard();
         static void guestDashboard();
+        static void memberDashboard();
 };
 #endif
