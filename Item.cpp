@@ -17,8 +17,9 @@ string Item::item_data = "";
 vector<Item>Item::items;
         
 // Constructor
-Item::Item(string itemID, string memberID, string name, string category, string description,
-           int startingBid, int currentBid, int bidIncrement, int year, int month, int day, int hour, int minute, int second)
+Item::Item(int itemID, int memberID, std::string name, std::string category, std::string description,
+           int startingBid, int currentBid, int bidIncrement, int year, int month, int day,
+           int hour, int minute, int second)
     : itemID(itemID), memberID(memberID), name(name), category(category), description(description),
       startingBid(startingBid), currentBid(currentBid), bidIncrement(bidIncrement) {
     endDateAndTime = (year * 10000000000LL) + (month * 100000000) + (day * 1000000) +
@@ -42,12 +43,14 @@ vector<Item> Item::readData(const string& filePath) {
     string line;
     while (getline(file, line)) {
         stringstream ss(line);
-        string itemID, memberID, name, category, description;
-        int startingBid, currentBid, bidIncrement;
+        string name, category, description;
+        int itemID, memberID, startingBid, currentBid, bidIncrement;
         long long endDateAndTime;
 
-        getline(ss, itemID, ',');
-        getline(ss, memberID, ',');
+        ss >> itemID;
+        ss.ignore();
+        ss >> memberID;
+        ss.ignore();
         getline(ss, name, ',');
         getline(ss, category, ',');
         getline(ss, description, ',');
@@ -91,7 +94,7 @@ void Item::readItemData(){
 
     // Ensure all columns have the same number of elements
     size_t rowCount = itemName.size();
-    if (category.size() != rowCount || description.size() != rowCount || startingBid.size() != rowCount ||currentBid.size() != rowCount ||
+    if (itemID.size() != rowCount ||memberID.size() != rowCount ||category.size() != rowCount || description.size() != rowCount || startingBid.size() != rowCount ||currentBid.size() != rowCount ||
         bidIncrement.size() != rowCount || endDateAndTime.size() != rowCount ) { //|| ratingPoints.size() != rowCount
         cerr << "Error: Columns have inconsistent lengths!" << endl;
         return;
@@ -108,7 +111,8 @@ void Item::readItemData(){
             int minute = (endDateTime / 100) % 100;
             int second = endDateTime % 100;
             
-            items.emplace_back(itemID[i], memberID[i], itemName[i], category[i], description[i], stoi(startingBid[i]), stoi(currentBid[i]), stoi(bidIncrement[i]), 
+            items.emplace_back(stoi(itemID[i]), stoi(memberID[i]), itemName[i], category[i], description[i], 
+                            stoi(startingBid[i]), stoi(currentBid[i]), stoi(bidIncrement[i]), 
                             year, month, day, hour, minute, second);
         } catch (const exception& e) {
             cerr << "Error processing row " << i << ": " << e.what() << endl;
@@ -159,7 +163,7 @@ void Item::updateDataFile(const string& filePath) {
     cout << "Item data updated successfully.\n";
 }
 
-bool Item::updateCurrentBidByID(const string& itemID, int newBid) {
+bool Item::updateCurrentBidByID(const int itemID, int newBid) {
     for (auto& item : items) {
         if (item.getItemID() == itemID) {
             if (newBid > item.currentBid) {
@@ -279,8 +283,8 @@ bool Item::removeListing() {
 
 
 // Getters
-string Item::getItemID() const { return itemID; }
-string Item::getMemberID() const { return memberID; }
+int Item::getItemID() const { return itemID; }
+int Item::getMemberID() const { return memberID; }
 string Item::getName() const { return name; }
 string Item::getCategory() const { return category; }
 string Item::getDescription() const {return description;}
@@ -294,7 +298,7 @@ void Item::setCurrentBid(int currentBid) {
     this -> currentBid = currentBid;
 }
 
-void Item::removeItem(const string& itemID) {
+void Item::removeItem(const int itemID) {
     items.erase(remove_if(items.begin(), items.end(),
                           [&itemID](const Item& item) { return item.getItemID() == itemID; }),
                 items.end());

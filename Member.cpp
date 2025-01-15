@@ -68,7 +68,7 @@ vector<Member> Member::readData(const string& filename) {
     return members;
 }
 
-// Display item informations
+// Display member informations
 void Member::showInfo() const {
     cout << "========= MEMBER INFORMATION =========\n";
     cout << "Full Name: " << fullname << "\n";
@@ -186,8 +186,8 @@ void Member::topupCredit(const string& membersFilePath) {
 
 // Creating Listing Items
 void Member::createListing(const string& filePath) {
-    string itemID, memberID, name, category, description;
-    int startingBid, currentBid, bidIncrement;
+    string name, category, description;
+    int itemID, memberID, startingBid, currentBid, bidIncrement;
     int year, month, day, hour, minute, second;
 
     cout << "===== Create New Listing =====\n";
