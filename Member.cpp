@@ -77,7 +77,7 @@ vector<Member> Member::readData(const string& filename) {
     return members;
 }
 
-// Display item informations
+// Display member informations
 void Member::showInfo() const {
     cout << "========= MEMBER INFORMATION =========\n";
     cout << "Full Name: " << fullname << "\n";
