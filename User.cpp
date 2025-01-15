@@ -9,8 +9,8 @@ vector<User>User::users;
 
 User::User(){}
 
-User::User(string username, string password, string fullname, string phoneNumber, string email,string IDType, string IDNumber, int creditPoints)
-    : username(username), password(password), fullname(fullname), phoneNumber(phoneNumber), email(email), IDType(IDType), IDNumber(IDNumber), creditPoints(creditPoints){}
+User::User(int userID, string username, string password, string fullname, string phoneNumber, string email,string IDType, string IDNumber, int creditPoints)
+    : userID(userID), username(username), password(password), fullname(fullname), phoneNumber(phoneNumber), email(email), IDType(IDType), IDNumber(IDNumber), creditPoints(creditPoints){}
 
 
 // Getters

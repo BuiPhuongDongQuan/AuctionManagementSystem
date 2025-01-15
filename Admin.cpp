@@ -15,56 +15,54 @@ void Admin::viewMemberInfo(string filePath){
         }
 
         // Print table header
-        cout << left << setw(20) << "Username"
-             << setw(20) << "Password"
-             << setw(20) << "Full Name"
-             << setw(20) << "Phone Number"
+        cout << left << setw(5) << "ID"
+             << setw(15) << "Username"
+             << setw(15) << "Password"
+             << setw(15) << "Full Name"
+             << setw(15) << "Phone Number"
              << setw(20) << "Email"
-             << setw(20) << "ID Type"
-             << setw(20) << "ID Number"
-             << setw(20) << "Credit Points"
+             << setw(15) << "ID Type"
+             << setw(15) << "ID Number"
+             << setw(15) << "Rating"
+             << setw(15) << "Rated Times"
+             << setw(15) << "Credit Points"
              << endl;
 
         cout << string(160, '-') << endl; // Divider line for the table
 
         string line;
-        bool isHeader = true;
+
 
         while (getline(file, line)) {
-            // Skip the header row
-            if (isHeader) {
-                isHeader = false;
-                continue;
-            }
-
-            // Skip blank lines
-            if (line.empty()) {
-                continue;
-            }
 
             istringstream iss(line);
-            string username, password, fullName, phoneNumber, email, idType, idNumber;
-            int creditPoints;
+            string ID,username, password, fullName, phoneNumber, email, idType, idNumber, ratingCount, rating, creditPoints;
 
             // Parse line (comma-separated values)
-            if (getline(iss, username, ',') &&
+            if (getline(iss, ID, ',') &&
+                getline(iss, username, ',') &&
                 getline(iss, password, ',') &&
                 getline(iss, fullName, ',') &&
                 getline(iss, phoneNumber, ',') &&
                 getline(iss, email, ',') &&
                 getline(iss, idType, ',') &&
                 getline(iss, idNumber, ',') &&
-                (iss >> creditPoints)) {
+                getline(iss, rating, ',') &&
+                getline(iss, ratingCount, ',') &&
+                getline(iss, creditPoints)) {
 
                 // Print parsed data in formatted columns
-                cout << left << setw(20) << username
-                     << setw(20) << password
-                     << setw(20) << fullName
-                     << setw(20) << phoneNumber
+                cout << left << setw(5) << ID
+                     << setw(15) << username
+                     << setw(15) << password
+                     << setw(15) << fullName
+                     << setw(15) << phoneNumber
                      << setw(20) << email
-                     << setw(20) << idType
-                     << setw(20) << idNumber
-                     << setw(20) << creditPoints
+                     << setw(15) << idType
+                     << setw(15) << idNumber
+                     << setw(15) << rating
+                     << setw(15) << ratingCount
+                     << setw(15) << creditPoints
                      << endl;
             } else {
                 cerr << "Error: Malformed line -> " << line << endl;
@@ -86,38 +84,38 @@ void Admin::viewItemData(string filePath){
 
         // Print table header
         cout << left << setw(15) << "Name"
-             << setw(15) << "Category"
+             << setw(20) << "Category"
              << setw(20) << "Description"
-             << setw(10) << "Stock"
-             << setw(10) << "Sold"
-             << setw(10) << "Discount"
+             << setw(20) << "Starting Bid $"
+             << setw(20) << "Current Bid $"
+             << setw(20) << "Increment Bid $"
              << setw(20) << "Expiry Date"
              << endl;
 
-        cout << string(90, '-') << endl; // Divider line for the table
+        cout << string(140, '-') << endl; // Divider line for the table
 
         string line;
         while (getline(file, line)) {
             istringstream iss(line);
             string name, category, description, expiryDate;
-            int stock, sold, discount;
+            int startingBid, currentBid, bidIncrement;
 
             // Parse line (comma-separated values)
             if (getline(iss, name, ',') &&
                 getline(iss, category, ',') &&
                 getline(iss, description, ',') &&
-                (iss >> stock).ignore() &&
-                (iss >> sold).ignore() &&
-                (iss >> discount).ignore() &&
+                (iss >> startingBid).ignore() &&
+                (iss >> currentBid).ignore() &&
+                (iss >> bidIncrement).ignore() &&
                 getline(iss, expiryDate)) {
 
                 // Print parsed data in formatted columns
                 cout << left << setw(15) << name
-                     << setw(15) << category
+                     << setw(20) << category
                      << setw(20) << description
-                     << setw(10) << stock
-                     << setw(10) << sold
-                     << setw(10) << discount
+                     << setw(20) << startingBid
+                     << setw(20) << currentBid
+                     << setw(20) << bidIncrement
                      << setw(20) << expiryDate
                      << endl;
             } else {

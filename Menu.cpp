@@ -110,12 +110,12 @@ void Menu::adminDashboard(){
     switch (choice)
     {
     case 1:
-        Admin::viewItemData("item.txt");
+        Admin::viewItemData(item_data);
         adminDashboard();
         break;
     
     case 2:
-        Admin::viewMemberInfo("user.txt");
+        Admin::viewMemberInfo(user_data);
         adminDashboard();
         break;
     }

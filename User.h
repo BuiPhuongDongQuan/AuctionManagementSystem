@@ -8,6 +8,7 @@ class User{
     protected:
         static string user_data;
     private:
+        int userID;
         string username;
         string password;
         string fullname;
@@ -19,7 +20,7 @@ class User{
         static vector<User> users;
     public:
         User();
-        User(string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber, int creditPoints );
+        User(int userID, string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber, int creditPoints );
 
         // Getters
         string getUsername();
