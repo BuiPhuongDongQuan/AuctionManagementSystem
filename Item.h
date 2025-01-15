@@ -11,6 +11,7 @@ class Member;
 class Item {
 protected:
     static string item_data;
+    static int nextItemID;
 private:
     int itemID;
     int memberID;
@@ -25,6 +26,10 @@ private:
 
 public:
     // Constructor
+    Item(int memberID, string name, string category, string description,
+         int startingBid, int currentBid, int bidIncrement, int year, int month, int day,
+         int hour, int minute, int second);
+
     Item(int itemID, int memberID, string name, string category, string description,
          int startingBid, int currentBid, int bidIncrement, int year, int month, int day,
          int hour, int minute, int second);

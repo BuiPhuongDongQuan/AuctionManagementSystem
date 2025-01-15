@@ -15,9 +15,19 @@ using namespace std;
 // Static members
 string Item::item_data = "";
 vector<Item>Item::items;
+int Item::nextItemID = 1;
         
 // Constructor
-Item::Item(int itemID, int memberID, std::string name, std::string category, std::string description,
+Item::Item(int memberID, string name, string category, string description,
+           int startingBid, int currentBid, int bidIncrement, int year, int month, int day,
+           int hour, int minute, int second)
+    : itemID(nextItemID++), memberID(memberID), name(name), category(category), description(description),
+      startingBid(startingBid), currentBid(currentBid), bidIncrement(bidIncrement) {
+    endDateAndTime = (year * 10000000000LL) + (month * 100000000) + (day * 1000000) +
+                     (hour * 10000) + (minute * 100) + second;
+}
+
+Item::Item(int itemID, int memberID, string name, string category, string description,
            int startingBid, int currentBid, int bidIncrement, int year, int month, int day,
            int hour, int minute, int second)
     : itemID(itemID), memberID(memberID), name(name), category(category), description(description),
@@ -41,6 +51,7 @@ vector<Item> Item::readData(const string& filePath) {
     }
 
     string line;
+    int maxID = 0;
     while (getline(file, line)) {
         stringstream ss(line);
         string name, category, description;
@@ -71,8 +82,10 @@ vector<Item> Item::readData(const string& filePath) {
 
         items.emplace_back(itemID, memberID, name, category, description, startingBid, currentBid, bidIncrement,
                            year, month, day, hour, minute, second);
+        maxID = max(maxID, itemID);
     }
-
+    
+    nextItemID = maxID + 1;
     return items;
 }
 

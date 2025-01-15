@@ -13,7 +13,7 @@ int main() {
 
     // Test constructor and display details
     cout << "Testing constructor and displayDetails()\n";
-    Item item(1,2,"Laptop", "Electronics", "A high-end gaming laptop",
+    Item item(2,"Laptop", "Electronics", "A high-end gaming laptop",
             1000, 1000, 50, 2025, 1, 15, 12, 0, 0);
     item.displayDetails();
 
