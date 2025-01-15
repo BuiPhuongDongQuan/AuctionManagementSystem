@@ -1,7 +1,16 @@
+// TODO: Member::Filter member who can see item base on rating score
+// TODO: Member::viewListing must include minimum buyer rating score and highest bidder
+// TODO: Member::Start with a default rating of 3 for both their seller and buyer roles
+// TODO: Member::Repair placeBid, not deduct credit point until end Auction
+// TODO: Bid::activeBid
+// TODO: Item::In Item txt, we need to have memberID to know what is the highest/latest bidder, after per Bid update who is the latest/highest 
+// TODO: Item::Need to have ratePoint to make sure that customer who satisfy with the rating that seller set
+// TODO: Rating::About rating seller and buyer, we have menu about rate buyer and seller, in this menu, we show the buyer and seller to rate
+// TODO: Auction::CP deducted from the winner’s account and transferred to the seller’s account upon conclusion of the auction
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
+#include <vector>   
 #include <sstream>
 #include <limits>
 #include <algorithm>
@@ -354,7 +363,7 @@ void Member::placeBid(Item& item, const std::string& filePath, const std::string
 }
 
 // View all item listings in items.txt
-void Member::viewAllListings(const string& filePath) {
+void Member::viewListings(const string& filePath) {
     // Read all items from the file
     vector<Item> items = Item::readData(filePath);
 

@@ -111,7 +111,7 @@ int main() {
 
     // View all listings
     cout << "\nViewing all listings:\n";
-    member4.viewAllListings(itemsFile);
+    member4.viewListings(itemsFile);
 
     // Search for items
     cout << "\nSearching for items:\n";
