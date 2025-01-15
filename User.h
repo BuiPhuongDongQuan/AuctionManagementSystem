@@ -8,6 +8,7 @@ class User{
     protected:
         static string user_data;
     private:
+        int userID;
         string username;
         string password;
         string fullname;
@@ -15,11 +16,13 @@ class User{
         string email;
         string IDType;
         string IDNumber;
+        double rating;
+        int ratedTimes;
         int creditPoints;
         static vector<User> users;
     public:
         User();
-        User(string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber, int creditPoints );
+        User(int userID, string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber, double rating, int ratedTimes, int creditPoints);
 
         // Getters
         string getUsername();
@@ -37,8 +40,7 @@ class User{
         static bool isStrongPassword(string password);
         static User* getUser(string username);
         static void login(string username, string password);
-        static void guestRegister(string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber, int creditPoints);
+        static void guestRegister(string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber);
         static void readData();
-        static void setUserData(string filePath);
 };
 #endif

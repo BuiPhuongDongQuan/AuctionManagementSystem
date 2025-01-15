@@ -77,3 +77,20 @@ void Function::writeToFile(string filePath, string content){
         throw runtime_error(string("Error writing to file") + e.what());
     }
 }
+
+void Function::readAllLine(const string filePath){
+    try{
+        // Open file
+        ifstream file(filePath);
+        if(!file.is_open()){
+            throw ios_base::failure("Fail to open file.");
+        }
+        string line;
+        while(getline(file,line)){ // Read line by line
+            cout << line << endl;
+        }
+        file.close();
+    } catch(const ios_base::failure& e){
+        cerr << "An error occurred: " << e.what() << endl;
+    }
+}

@@ -1,68 +1,146 @@
+// ! Test Item Function
+// #include "Item.h"
+// #include <iostream>
+// #include <vector>
+// #include <fstream>
+
+// using namespace std;
+
+// int main() {
+//     // Set item data file
+//     const string filePath = "item_data.txt";
+//     Item::setItemData(filePath);
+
+//     // Test constructor and display details
+//     cout << "Testing constructor and displayDetails()\n";
+//     Item item("Laptop", "Electronics", "A high-end gaming laptop", 
+//             1000, 1000, 50, 2025, 1, 15, 12, 0, 0);
+//     item.displayDetails();
+
+//     // Test toString()
+//     cout << "\nTesting toString()\n";
+//     cout << "Item as string: " << item.toString();
+
+//     // Test writeToFile()
+//     cout << "\nTesting writeToFile()\n";
+//     item.writeToFile(filePath, item.toString());
+
+//     // Test readItemData()
+//     cout << "\nTesting readItemData()\n";
+//     Item::readItemData();
+//     const vector<Item>& items = Item::getItems();
+//     for (const auto& i : items) {
+//         i.displayLimitedDetails();
+//     }
+
+//     // Test addListing()
+//     cout << "\nTesting addListing()\n";
+//     item.addListing();
+
+//     // Test removeListing()
+//     cout << "\nTesting removeListing()\n";
+//     if (!item.removeListing()) {
+//         cout << "Failed to remove listing.\n";
+//     }
+
+//     // Test isTimerDone()
+//     cout << "\nTesting isTimerDone()\n";
+//     if (item.isTimerDone()) {
+//         cout << "Timer is done for the item.\n";
+//     } else {
+//         cout << "Timer is still running for the item.\n";
+//     }
+
+//     // Test startTimer() (commented to avoid long wait in tests)
+//     // cout << "\nTesting startTimer()\n";
+//     // item.startTimer();
+
+//     // Test removeFromFile()
+//     cout << "\nTesting removeFromFile()\n";
+//     Item::removeFromFile(filePath, "Laptop");
+//     Item::readItemData();
+//     for (const auto& i : Item::getItems()) {
+//         i.displayLimitedDetails();
+//     }
+
+//     // Cleanup
+//     cout << "\nCleaning up test file\n";
+//     remove(filePath.c_str());
+
+//     cout << "\nAll tests completed.\n";
+//     return 0;
+// }
+
+// ! Test Member Function
+
+#include <iostream>
+#include <vector>
 #include "User.h"
 #include "Admin.h"
 #include "Guest.h"
-#include <iostream>
+#include "Member.h"
+#include "Rating.h"
+#include "Item.h"
+#include "Member.h"
+#include "Menu.h"
+#include "functions/Function.h"
 
 using namespace std;
 
 int main() {
+    // File paths
+    const string membersFile = "members.txt";
+    const string itemsFile = "item.txt";
 
-    // Set the path to the user data file
-    User::setUserData("user.txt");
-    Item::setItemData("item.txt");
-
-
-
-    // Prompt user for login credentials
-    // string username, password;
-    // cout << "\nEnter your username: " << endl;
-    // cin >> username;
-    // cout << "Enter your password: " << endl;
-    // cin >> password;
-
-    // Attempt login with the provided credentials
-    // User::login(username, password);
-
-
-    // string username, password, fullname, phoneNumber, email, IDType, IDNumber;
-    
-    // cout << "Enter your username: " <<endl;
-    // cin >> username;
-    // cin.ignore();
-    
-    // cout << "Enter your password: " <<endl;
-    // cin >> password;
-    // cin.ignore();
-
-    // cout << "Enter your fullname: " <<endl;
-    // getline(cin, fullname);
-    
-    // cout << "Enter your phoneNumber: " <<endl;
-    // cin >> phoneNumber;
-    // cin.ignore();
-
-
-    // cout << "Enter your email: " <<endl;
-    // cin >> email;
-    // cin.ignore();
-
-    // cout << "Enter your ID type (Citizen ID/Passport): " <<endl;
-    // cin >> IDType;
-    // cin.ignore();
-
-    // cout << "Enter your ID number: " <<endl;
-    // cin >> IDNumber;
-    // cin.ignore();
-
-    // User::guestRegister(username, password, fullname, phoneNumber, email, IDType, IDNumber, 0);
-    Admin admin;
-    admin.viewMemberInfo();
-    admin.viewItemData();
-
-
-    Guest guest;
-    guest.viewItem();
-
-    
+    Menu::menuDisplay();
     return 0;
+    // Create a Member
+    // Member member4("user1", "pass123", "John Doe", "1234567890", "john@example.com", "IDCard", "A12345678", 4.5, 10, 100);
+    // Function::writeToFile(membersFile, member4.toString());
+    // cout << "Member created and saved to file.\n";
+
+    // // Display member information
+    // cout << "Displaying member information:\n";
+    // member4.showInfo();
+
+    // // Update member information
+    // cout << "\nUpdating member information:\n";
+    // member4.updateInfo(membersFile);
+    // member4.showInfo();
+
+    // // Top up credits
+    // cout << "\nTopping up credit points:\n";
+    // member4.topupCredit(membersFile);
+    // member4.showInfo();
+
+    // // Create a listing
+    // cout << "\nCreating a listing:\n";
+    // member4.createListing(itemsFile);
+
+    // // View all listings
+    // cout << "\nViewing all listings:\n";
+    // member4.viewAllListings(itemsFile);
+
+    // // Search for items
+    // cout << "\nSearching for items:\n";
+    // member4.searchItems("Iphone15", "Electronic", -1, -1);
+
+    // // Place a bid on an item
+    // vector<Item> items = Item::readData(itemsFile);
+    // if (!items.empty()) {
+    //     cout << "\nPlacing a bid on the first item:\n";
+    //     member4.placeBid(items[1], itemsFile, membersFile);
+    // } else {
+    //     cout << "No items available for bidding.\n";
+    // }
+
+    // // Rate the member
+    // cout << "\nRating the member:\n";
+    // member4.rateMember(5.0);
+    // member4.showInfo();
+
+    // // Update the member in the file
+    // member4.updateMemberInFile(membersFile);
+
+    // return 0;
 }
