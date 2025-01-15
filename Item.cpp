@@ -19,19 +19,19 @@ int Item::nextItemID = 1;
         
 // Constructor
 Item::Item(int memberID, string name, string category, string description,
-           int startingBid, int currentBid, int bidIncrement, int year, int month, int day,
+           int startingBid, int currentBid, int bidIncrement, double ratePoint, int year, int month, int day,
            int hour, int minute, int second)
     : itemID(nextItemID++), memberID(memberID), name(name), category(category), description(description),
-      startingBid(startingBid), currentBid(currentBid), bidIncrement(bidIncrement) {
+      startingBid(startingBid), currentBid(currentBid), bidIncrement(bidIncrement), ratePoint(ratePoint) {
     endDateAndTime = (year * 10000000000LL) + (month * 100000000) + (day * 1000000) +
                      (hour * 10000) + (minute * 100) + second;
 }
 
 Item::Item(int itemID, int memberID, string name, string category, string description,
-           int startingBid, int currentBid, int bidIncrement, int year, int month, int day,
+           int startingBid, int currentBid, int bidIncrement, double ratePoint, int year, int month, int day,
            int hour, int minute, int second)
     : itemID(itemID), memberID(memberID), name(name), category(category), description(description),
-      startingBid(startingBid), currentBid(currentBid), bidIncrement(bidIncrement) {
+      startingBid(startingBid), currentBid(currentBid), bidIncrement(bidIncrement), ratePoint(ratePoint) {
     endDateAndTime = (year * 10000000000LL) + (month * 100000000) + (day * 1000000) +
                      (hour * 10000) + (minute * 100) + second;
 }
@@ -56,6 +56,7 @@ vector<Item> Item::readData(const string& filePath) {
         stringstream ss(line);
         string name, category, description;
         int itemID, memberID, startingBid, currentBid, bidIncrement;
+        double ratePoint;
         long long endDateAndTime;
 
         ss >> itemID;
@@ -71,6 +72,8 @@ vector<Item> Item::readData(const string& filePath) {
         ss.ignore();
         ss >> bidIncrement;
         ss.ignore();
+        ss >> ratePoint;
+        ss.ignore();
         ss >> endDateAndTime;
 
         int year = endDateAndTime / 10000000000LL;
@@ -80,11 +83,11 @@ vector<Item> Item::readData(const string& filePath) {
         int minute = (endDateAndTime / 100) % 100;
         int second = endDateAndTime % 100;
 
-        items.emplace_back(itemID, memberID, name, category, description, startingBid, currentBid, bidIncrement,
+        items.emplace_back(itemID, memberID, name, category, description, startingBid, currentBid, bidIncrement, ratePoint,
                            year, month, day, hour, minute, second);
         maxID = max(maxID, itemID);
     }
-    
+
     nextItemID = maxID + 1;
     return items;
 }
@@ -102,13 +105,14 @@ void Item::readItemData(){
     vector<string> startingBid = Function::readCol(5, item_data, ',');
     vector<string> currentBid = Function::readCol(6, item_data, ',');
     vector<string> bidIncrement = Function::readCol(7, item_data, ',');
-    vector<string> endDateAndTime = Function::readCol(8, item_data, ',');
+    vector<string> ratePoint = Function::readCol(8, item_data, ',');
+    vector<string> endDateAndTime = Function::readCol(9, item_data, ',');
     // vector<string> ratingPoints = Function::readCol(7, item_data, ';');
 
     // Ensure all columns have the same number of elements
     size_t rowCount = itemName.size();
     if (itemID.size() != rowCount ||memberID.size() != rowCount ||category.size() != rowCount || description.size() != rowCount || startingBid.size() != rowCount ||currentBid.size() != rowCount ||
-        bidIncrement.size() != rowCount || endDateAndTime.size() != rowCount ) { //|| ratingPoints.size() != rowCount
+        bidIncrement.size() != rowCount || ratePoint.size() != rowCount || endDateAndTime.size() != rowCount ) { //|| ratingPoints.size() != rowCount
         cerr << "Error: Columns have inconsistent lengths!" << endl;
         return;
     }
@@ -125,7 +129,7 @@ void Item::readItemData(){
             int second = endDateTime % 100;
             
             items.emplace_back(stoi(itemID[i]), stoi(memberID[i]), itemName[i], category[i], description[i], 
-                            stoi(startingBid[i]), stoi(currentBid[i]), stoi(bidIncrement[i]), 
+                            stoi(startingBid[i]), stoi(currentBid[i]), stoi(bidIncrement[i]),  stod(ratePoint[i]), 
                             year, month, day, hour, minute, second);
         } catch (const exception& e) {
             cerr << "Error processing row " << i << ": " << e.what() << endl;
@@ -138,9 +142,18 @@ void Item::readItemData(){
 void Item::writeToFile(const string& filePath, const string& content) {
     ofstream file(filePath, ios::app);
     if (!file.is_open()) {
-        throw runtime_error("Failed to open file.");
+        cerr << "Error: Could not open file '" << filePath << "' for writing.\n";
+        perror("Error");
+        return;
     }
-    file << content;
+
+    file << content << endl;
+    if (file.fail()) {
+        cerr << "Error: Failed to write to file '" << filePath << "'.\n";
+    } else {
+        cout << "Successfully wrote item to file: " << filePath << endl;
+    }
+
     file.close();
 }
 
@@ -198,7 +211,7 @@ bool Item::updateCurrentBidByID(const int itemID, int newBid) {
 string Item::toString() const {
     stringstream ss;
     ss << itemID << "," << memberID << "," << name << "," << category << "," << description << ","
-       << startingBid << "," << currentBid << "," << bidIncrement << "," << endDateAndTime << "\n";
+       << startingBid << "," << currentBid << "," << bidIncrement << "," << ratePoint << endDateAndTime << "\n";
     return ss.str();
 }
 
@@ -304,6 +317,7 @@ string Item::getDescription() const {return description;}
 string Item::getItemData() {return item_data;}
 int Item::getCurrentBid() const{ return currentBid; };
 int Item::getBidIncrement() const{ return bidIncrement; };
+double Item::getRatePoint() const {return ratePoint;}
 const vector<Item>& Item::getItems() {return items;}
 
 // Setter
@@ -316,4 +330,34 @@ void Item::removeItem(const int itemID) {
                           [&itemID](const Item& item) { return item.getItemID() == itemID; }),
                 items.end());
     cout << "Item with ID " << itemID << " has been removed from the system.\n";
+}
+
+void Item::setRatePoint(double ratePoint) {
+    if (ratePoint < 0 || ratePoint > 5) {
+        cerr << "Error: Rate point must be between 0 and 5.\n";
+        return;
+    }
+    this->ratePoint = ratePoint;
+    cout << "Rate point for item ID " << itemID << " set to " << ratePoint << endl;
+}
+
+bool Item::isVisibleTo(double buyerRating) const {
+    return buyerRating >= ratePoint;
+}
+
+vector<Item> Item::getVisibleItems(double buyerRating) {
+    vector<Item> visibleItems;
+    for (const auto& item : items) {
+        if (item.isVisibleTo(buyerRating)) {
+            visibleItems.push_back(item);
+        }
+    }
+    return visibleItems;
+}
+
+void Item::displayItems(const vector<Item>& items) {
+    for (const auto& item : items) {
+        cout << "Item ID: " << item.getItemID() << ", Name: " << item.getName()
+             << ", Minimum Rating: " << item.getRatePoint() << endl;
+    }
 }

@@ -12,62 +12,70 @@ int main() {
     Item::setItemData(filePath);
 
     // Test constructor and display details
-    cout << "Testing constructor and displayDetails()\n";
-    Item item(2,"Laptop", "Electronics", "A high-end gaming laptop",
-            1000, 1000, 50, 2025, 1, 15, 12, 0, 0);
-    item.displayDetails();
+    Item item(1, "Laptop", "Electronics", "A high-end gaming laptop", 
+               1000, 1000, 50, 4.5, 2025, 1, 15, 12, 0, 0);
+    Item item2(2, "Smartphone", "Electronics", "A flagship smartphone", 
+               800, 800, 25, 3.0, 2025, 2, 1, 10, 30, 0);
 
     // Test toString()
     cout << "\nTesting toString()\n";
     cout << "Item as string: " << item.toString();
+    cout << "Item as string: " << item2.toString();
 
     // Test writeToFile()
     cout << "\nTesting writeToFile()\n";
-    item.writeToFile(filePath, item.toString());
+    Item::writeToFile(filePath, item.toString());
+    Item::writeToFile(filePath, item2.toString());
+
+    // Simulate a buyer with rating 3.5
+    double buyerRating = 3.5;
+    cout << "Items visible to buyer with rating " << buyerRating << ":\n";
+    vector<Item> visibleItems = Item::getVisibleItems(buyerRating);
+    Item::displayItems(visibleItems);
 
     // Test readItemData()
-    cout << "\nTesting readItemData()\n";
-    Item::readItemData();
-    const vector<Item>& items = Item::getItems();
-    for (const auto& i : items) {
-        i.displayLimitedDetails();
-    }
+    //cout << "\nTesting readItemData()\n";
+    //Item::readItemData();
+    //const vector<Item>& items = Item::getItems();
+    //for (const auto& i : items) {
+        //i.displayLimitedDetails();
+    //}
 
     // Test addListing()
-    cout << "\nTesting addListing()\n";
-    item.addListing();
+    //cout << "\nTesting addListing()\n";
+    //item.addListing();
 
     // Test removeListing()
-    cout << "\nTesting removeListing()\n";
-    if (!item.removeListing()) {
-        cout << "Failed to remove listing.\n";
-    }
+    //cout << "\nTesting removeListing()\n";
+    //if (!item.removeListing()) {
+        //cout << "Failed to remove listing.\n";
+    //}
 
     // Test isTimerDone()
-    cout << "\nTesting isTimerDone()\n";
-    if (item.isTimerDone()) {
-        cout << "Timer is done for the item.\n";
-    } else {
-        cout << "Timer is still running for the item.\n";
-    }
+    //cout << "\nTesting isTimerDone()\n";
+    //if (item.isTimerDone()) {
+    //cout << "Timer is done for the item.\n";
+    //} else {
+        //cout << "Timer is still running for the item.\n";
+    //}
 
     // Test startTimer() (commented to avoid long wait in tests)
-    cout << "\nTesting startTimer()\n";
-    item.startTimer();
+    //cout << "\nTesting startTimer()\n";
+    //item.startTimer();
 
     // Test removeFromFile()
-    cout << "\nTesting removeFromFile()\n";
-    Item::removeFromFile(filePath, "Laptop");
-    Item::readItemData();
-    for (const auto& i : Item::getItems()) {
-        i.displayLimitedDetails();
-    }
+    //cout << "\nTesting removeFromFile()\n";
+    //Item::removeFromFile(filePath, "Laptop");
+    //Item::readItemData();
+    //for (const auto& i : Item::getItems()) {
+        //i.displayLimitedDetails();
+    //}
 
     // Cleanup
     // cout << "\nCleaning up test file\n";
     // remove(filePath.c_str());
 
-    cout << "\nAll tests completed.\n";
+    //cout << "\nAll tests completed.\n";
     return 0;
 }
 

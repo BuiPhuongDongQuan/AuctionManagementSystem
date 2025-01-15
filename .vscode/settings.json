@@ -58,6 +58,9 @@
         "variant": "cpp",
         "iomanip": "cpp",
         "chrono": "cpp",
-        "xlocale": "cpp"
+        "xlocale": "cpp",
+        "xstring": "cpp",
+        "xtree": "cpp",
+        "xutility": "cpp"
     },
 }
