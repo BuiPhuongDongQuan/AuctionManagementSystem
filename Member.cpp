@@ -300,67 +300,68 @@ void Member::updateMemberInFile(const std::string& filePath) {
     outFile.close();
 }
 
-// Method to place bid
-void Member::placeBid(Item& item, const std::string& filePath, const std::string& membersFilePath) {
-    while (true) {
-        cout << "\n========= Place a Bid =========\n";
-        cout << "Your current credit points: " << creditPoints << "\n";
-        cout << "Current highest bid: $" << item.getCurrentBid() << "\n";
-        cout << "Minimum bid increment: $" << item.getBidIncrement() << "\n";
-    
-        // Calculate the minimum bid amount
-        int minBid = item.getCurrentBid() + item.getBidIncrement();
-
-        cout << "Enter your bid (minimum $" << minBid << "): ";
-        int bid;
-        cin >> bid;
-
-        // Input validation
-        if (cin.fail() || bid < minBid) {
-            cout << "Invalid bid! Your bid must be at least $" << minBid << ". Try again.\n";
-            cin.clear(); // Clear error flags
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore invalid input
-            continue;
+// Get available credit points (credit points minus active bids)
+int Member::balanceCP() const {
+    int usedPoints = 0;
+    for (const auto& bid : activeBids) {
+        if (bid.getActiveBid()) {
+            usedPoints += bid.getActiveBid();
         }
+    }
+    return creditPoints - usedPoints;
+}
 
-        // Check if the user has enough credit points
-        if (bid - item.getCurrentBid() > creditPoints) {
-            cout << "Insufficient credit points! You only have $" << creditPoints << ".\n";
-            cout << "Please add more credits or lower your bid.\n";
-            continue;
+// Place a bid
+bool Member::placeBid(const string& auctionID, int bidAmount) {
+    // Check if member has an active bid in this auction
+    for (auto& bid : activeBids) {
+        if (bid.isActiveBid(auctionID, to_string(memberID))) {
+            // Update existing bid if the new amount is higher
+            if (bidAmount > bid.getActiveBid()) {
+                int requiredPoints = bidAmount - bid.getActiveBid(); // Additional points required
+                if (balanceCP() >= requiredPoints) {  // Use Member's balanceCP method
+                    bid.setActiveBid(bidAmount);
+                    cout << "Bid updated successfully in auction " << auctionID << ". New bid: " << bidAmount << " CP.\n";
+                    return true;
+                } else {
+                    cout << "Insufficient balance to increase the bid.\n";
+                    return false;
+                }
+            } else {
+                cout << "New bid amount must be higher than the current bid.\n";
+                return false;
+            }
         }
+    }
 
-        // Deduct bid amount from user's credit points
-        creditPoints -= bid - item.getCurrentBid();
+    // New bid
+    if (balanceCP() >= bidAmount) {  // Use Member's balanceCP method
+        activeBids.emplace_back(auctionID, to_string(memberID), bidAmount, true);
+        cout << "Bid placed successfully in auction " << auctionID << ". Amount: " << bidAmount << " CP.\n";
+        return true;
+    } else {
+        cout << "Insufficient balance to place the bid.\n";
+        return false;
+    }
+}
 
-        // Update the item's current bid to the new bid
-        setCreditPoints(creditPoints);
-        item.setCurrentBid(bid);
-
-        // Update the item in the file
-        updateItemInFile(filePath, item);
-
-        // Update the member's data in the members file
-        updateMemberInFile(membersFilePath);
-
-        cout << "Congratulations! You are now the highest bidder with a bid of $" << bid << ".\n";
-
-        if(creditPoints <= 0) {
-            cout << "You are out of Credit Point! Please add more credits"; 
-            break;
-        }
-
-        // Ask the user if they want to place another bid
-        char choice;
-        cout << "Do you want to place another bid? (y/n): ";
-        cin >> choice;
-
-        if (choice == 'n' || choice == 'N') {
-            cout << "Thank you for bidding. Good luck!\n";
+// Handle auction result
+void Member::finalizeBid(const string& auctionID, bool won) {
+    for (auto& bid : activeBids) {
+        if (bid.isActiveBid(auctionID, to_string(memberID))) {
+            if (won) {
+                creditPoints -= bid.getActiveBid(); // Deduct bid amount
+                cout << "You won the auction in " << auctionID << "! Deducted " << bid.getActiveBid() << " CP.\n";
+            } else {
+                creditPoints += bid.getActiveBid(); // Refund bid amount
+                cout << "You lost the auction in " << auctionID << ". Refunded " << bid.getActiveBid() << " CP.\n";
+            }
+            bid.setIsActive(false); // Mark bid as inactive
             break;
         }
     }
 }
+
 
 // View all item listings in items.txt
 void Member::viewListings(const string& filePath) {

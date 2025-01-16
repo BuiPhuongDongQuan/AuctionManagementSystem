@@ -23,5 +23,9 @@ public:
     string getMemberID() const;
     int getActiveBid() const;
     bool getIsActive() const;
+
+    // Setters
+    void setIsActive(bool isActive); 
+    void setActiveBid(int activeVid);
 };
 #endif

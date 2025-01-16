@@ -49,3 +49,17 @@ vector<Bid> Bid::readData(const string& filePath) {
     inFile.close();
     return bids;
 }
+
+// Getters
+int Bid::getActiveBid() const { return activeBid; }
+bool Bid::getIsActive() const { return isActive; }
+
+// Setters
+void Bid::setIsActive(bool isActive) {
+    this -> isActive = isActive;
+}
+
+void Bid::setActiveBid(int activeVid){
+    this -> activeBid = activeBid;
+}
+
