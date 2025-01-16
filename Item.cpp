@@ -211,7 +211,7 @@ bool Item::updateCurrentBidByID(const int itemID, int newBid) {
 string Item::toString() const {
     stringstream ss;
     ss << itemID << "," << memberID << "," << name << "," << category << "," << description << ","
-       << startingBid << "," << currentBid << "," << bidIncrement << "," << ratePoint << endDateAndTime << "\n";
+       << startingBid << "," << currentBid << "," << bidIncrement << "," << ratePoint << "," << endDateAndTime << "\n";
     return ss.str();
 }
 
