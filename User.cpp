@@ -1,21 +1,18 @@
 #include "User.h"
+#include "Menu.h"
 #include "functions/Function.h"
 #include <iostream>
 using namespace std;
 
 // Static members
-string User::user_data = "";
+string User::user_data = "members.txt";
 vector<User>User::users;
 
 User::User(){}
 
-User::User(string username, string password, string fullname, string phoneNumber, string email,string IDType, string IDNumber, int creditPoints)
-    : username(username), password(password), fullname(fullname), phoneNumber(phoneNumber), email(email), IDType(IDType), IDNumber(IDNumber), creditPoints(creditPoints){}
+User::User(int userID, string username, string password, string fullname, string phoneNumber, string email,string IDType, string IDNumber, double rating, int ratedTimes, int creditPoints)
+    : userID(userID), username(username), password(password), fullname(fullname), phoneNumber(phoneNumber), email(email), IDType(IDType), IDNumber(IDNumber), creditPoints(creditPoints){}
 
-// Set user data file path
-void User::setUserData(string filePath) {
-    user_data = filePath;
-}
 
 // Getters
 string User::getUsername(){
@@ -47,29 +44,32 @@ void User::readData(){
     users.clear();
     int countLine = Function::countLine(user_data);
 
-    vector<string> username = Function::readCol(0, user_data, ',');
-    vector<string> password = Function::readCol(1, user_data, ',');
-    vector<string> fullname = Function::readCol(2, user_data, ',');
-    vector<string> phoneNumber = Function::readCol(3, user_data, ',');
-    vector<string> email = Function::readCol(4, user_data, ',');
-    vector<string> IDType = Function::readCol(5, user_data, ',');
-    vector<string> IDNumber = Function::readCol(6, user_data, ',');
-    vector<string> creditPoints = Function::readCol(7, user_data, ',');
+    vector<string> userID = Function::readCol(0, user_data, ',');
+    vector<string> username = Function::readCol(1, user_data, ',');
+    vector<string> password = Function::readCol(2, user_data, ',');
+    vector<string> fullname = Function::readCol(3, user_data, ',');
+    vector<string> phoneNumber = Function::readCol(4, user_data, ',');
+    vector<string> email = Function::readCol(5, user_data, ',');
+    vector<string> IDType = Function::readCol(6, user_data, ',');
+    vector<string> IDNumber = Function::readCol(7, user_data, ',');
+    vector<string> rating = Function::readCol(8, user_data, ',');
+    vector<string> ratedTimes = Function::readCol(9, user_data, ',');
+    vector<string> creditPoints = Function::readCol(10, user_data, ',');
     
     // Ensure all columns have the same number of elements
-    size_t rowCount = username.size();
-    if (fullname.size() != rowCount || password.size() != rowCount || phoneNumber.size() != rowCount ||
-        email.size() != rowCount || IDType.size() != rowCount || IDNumber.size() != rowCount ||
-        creditPoints.size() != rowCount) {
+    size_t rowCount = userID.size();
+    if (username.size() != rowCount || password.size() != rowCount || fullname.size() != rowCount ||
+        phoneNumber.size() != rowCount || email.size() != rowCount || IDType.size() != rowCount ||
+        IDNumber.size() != rowCount || rating.size() != rowCount || ratedTimes.size() != rowCount || creditPoints.size() != rowCount) {
         std::cerr << "Error: Columns have inconsistent lengths!" << std::endl;
         return;
     }
 
     // Populate the users vector with User objects
-    for (size_t i = 0; i < rowCount; ++i) { 
+    for (size_t i = 1; i < rowCount; ++i) { 
         try {
-            users.emplace_back(username[i], password[i], fullname[i], phoneNumber[i], email[i], 
-                               IDType[i], IDNumber[i], stoi(creditPoints[i])); // Using std::stoi for int conversion
+            users.emplace_back(stoi(userID[i]), username[i], password[i], fullname[i], phoneNumber[i], email[i], 
+                               IDType[i], IDNumber[i], stod(rating[i]), stoi(ratedTimes[i]), stoi(creditPoints[i])); // Using std::stoi for int conversion
         } catch (const std::exception& e) {
             std::cerr << "Error processing row " << i << ": " << e.what() << std::endl;
             continue;  // Skip this row and continue with the next one
@@ -103,6 +103,7 @@ void User::login(string username, string password){
         if(user->authentication(username, password)){
             cout << "Welcome back " << username << endl;
             user->setUsername(username);
+            Menu::memberDashboard();
         }else{
             cout << "Login failed! Username or password is incorrect." << endl;
         }
@@ -135,8 +136,10 @@ bool User::usernameExist(string username){
 }
 
 // Register function
-void User::guestRegister(string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber, int creditPoints){
+void User::guestRegister(string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber){
     int countLine = Function::countLine(user_data);
+    // Create unique ID
+    string id = "U" + to_string(countLine);
     // Ensure the username is unique
     while(usernameExist(username)== true){
         cout << "Error: Username already exists. Please choose a different username." << endl;
@@ -149,7 +152,9 @@ void User::guestRegister(string username, string password, string fullname, stri
         cout << "Please enter a stronger password: ";
         cin >> password;
     }
-    int creditpoints = 0;
-    string newMember = "\n" + username + "," + password + "," + fullname + "," + phoneNumber + "," + email + "," + IDType + "," + IDNumber + "," + to_string(creditPoints);
+    int creditPoints = 0;
+    double rating = 3;
+    int ratedTimes = 0;
+    string newMember = "\n" + id + ","+ username + "," + password + "," + fullname + "," + phoneNumber + "," + email + "," + IDType + "," + IDNumber + "," + to_string(rating) + "," + to_string(ratedTimes)+ "," + to_string(creditPoints);
     Function::writeToFile(user_data, newMember);
 }

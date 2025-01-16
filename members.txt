@@ -1,10 +1,3 @@
-1,user1,pass123,John Doe,1234567890,john@example.com,IDCard,A12345678,4.54545,11,180
-2,Bimbim,54611516,Bimbim,1234567890,john@example.com,IDCard,A12345678,4.5,10,100
-0,user1,123456789164,John Doe,1234567890,john@example.com,IDCard,A12345678,4.54545,11,500
-1583202448,Phuong,Phuong,Phuong,1234567890,john@example.com,IDCard,A12345678,4.54545,11,90
-1,user1,pass123,John Doe,1234567890,john@example.com,IDCard,A12345678,4.54545,11,180
-1,user1,pass123,John Doe,1234567890,john@example.com,IDCard,A12345678,4.54545,11,180
-1,user1,pass123,John Doe,1234567890,john@example.com,IDCard,A12345678,4.54545,11,180
-1,user1,pass123,John Doe,1234567890,john@example.com,IDCard,A12345678,4.54545,11,180
-954201440,user1,pass123,John Doe,1234567890,john@example.com,IDCard,A12345678,4.54545,11,-2147483493
--834669456,user1,pass123,John Doe,1234567890,john@example.com,IDCard,A12345678,4.54545,11,377
+ID,username,passport,fullname,phoneNumber,email,IDType,IDNumber,rating,ratedTimes,creditPoints
+U1,minhkhoi,Minhkhoi123@!,Minh Khoi,123456789,minhkhoi@gmail.com,Paspo,123432,3.000000,0,0
+U2,khoiminh,Khoiminh123@!,Khoi Minh,123456789,khoiminh@gmail.com,Passport,P1234,3.000000,0,0

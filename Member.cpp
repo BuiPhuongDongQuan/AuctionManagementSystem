@@ -22,6 +22,7 @@
 using namespace std;
 
 // Constructor
+Member::Member(){}
 Member::Member(string username = "", string password = "", string fullname = "", string phoneNumber = "", 
     string email = "", string IDType = "", string IDNumber = "", double rating = 0.0, int ratingCount = 0, int creditPoints = 0)
     : memberID(memberID) ,username(username), password(password), fullname(fullname), phoneNumber(phoneNumber), email(email),

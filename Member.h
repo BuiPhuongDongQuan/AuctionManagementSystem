@@ -32,6 +32,7 @@ private:
     vector<Bid> activeBids;
 
 public:
+    Member();
     Member(string username, string password, string fullname, string phoneNumber, 
            string email, string IDType, string IDNumber, double rating , int ratingCount, int creditPoint);
 
