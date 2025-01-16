@@ -34,11 +34,53 @@ Item::Item(int itemID, int memberID, string name, string category, string descri
       startingBid(startingBid), currentBid(currentBid), bidIncrement(bidIncrement), ratePoint(ratePoint) {
     endDateAndTime = (year * 10000000000LL) + (month * 100000000) + (day * 1000000) +
                      (hour * 10000) + (minute * 100) + second;
+    }
+// Set item data file path
+void Item::setItemData(string filePath) {
+    item_data = filePath;
 }
 
-// Set item data file path
-void Item::setItemData(string filePath){
-    item_data = filePath;
+// Read items in data file
+void Item::readItemData(){
+    items.clear();
+    int countLine = Function::countLine(item_data);
+
+    vector<string> itemName = Function::readCol(0, item_data, ';');
+    vector<string> category = Function::readCol(1, item_data, ';');
+    vector<string> description = Function::readCol(2, item_data, ';');
+    vector<string> currentBid = Function::readCol(3, item_data, ';');
+    vector<string> bidIncrement = Function::readCol(4, item_data, ';');
+    vector<string> endDateAndTime = Function::readCol(5, item_data, ';');
+    vector<string> ratingPoints = Function::readCol(6, item_data, ';');
+
+    // Ensure all columns have the same number of elements
+    size_t rowCount = itemName.size();
+    if (category.size() != rowCount || description.size() != rowCount || currentBid.size() != rowCount ||
+        bidIncrement.size() != rowCount || endDateAndTime.size() != rowCount || ratingPoints.size() != rowCount) {
+        cerr << "Error: Columns have inconsistent lengths!" << endl;
+        return;
+    }
+
+    // Populate the users vector with User objects
+    for (size_t i = 0; i < rowCount; ++i) { 
+        try {
+            items.emplace_back(itemName[i], category[i], description[i], stoi(currentBid[i]), stoi(bidIncrement[i]), 
+                               stol(endDateAndTime[i]), stod(ratingPoints[i]));
+        } catch (const exception& e) {
+            cerr << "Error processing row " << i << ": " << e.what() << endl;
+            continue;  // Skip this row and continue with the next one
+        }
+    }
+}
+
+// Write item to file
+void Item::writeToFile(const string& filePath, const string& content) {
+    ofstream file(filePath, ios::app);
+    if (!file.is_open()) {
+        throw runtime_error("Failed to open file.");
+    }
+    file << content;
+    file.close();
 }
 
 // Read items from file
@@ -66,8 +108,6 @@ vector<Item> Item::readData(const string& filePath) {
         getline(ss, name, ',');
         getline(ss, category, ',');
         getline(ss, description, ',');
-        ss >> startingBid;
-        ss.ignore();
         ss >> currentBid;
         ss.ignore();
         ss >> bidIncrement;
@@ -157,8 +197,10 @@ void Item::writeToFile(const string& filePath, const string& content) {
     file.close();
 }
 
+
 // Remove items by name from file
 void Item::removeFromFile(const string& filePath, const string& itemNameToRemove) {
+    vector<Item> items = readData(filePath);
     ofstream file(filePath, ios::trunc);
     if (!file.is_open()) {
         throw runtime_error("Error: Could not open file for writing.");
@@ -212,13 +254,16 @@ string Item::toString() const {
     stringstream ss;
     ss << itemID << "," << memberID << "," << name << "," << category << "," << description << ","
        << startingBid << "," << currentBid << "," << bidIncrement << "," << ratePoint << "," << endDateAndTime << "\n";
+
     return ss.str();
 }
 
 
 // Add listing
 void Item::addListing() {
-    cout << "Listing added: " << name << " in category " << category << "\n";
+    string content = toString();
+    Function::writeToFile(item_data, content);
+    cout << "Item added to file: " << name << endl;
 }
 
 // Display full details
@@ -227,8 +272,7 @@ void Item::displayDetails() const {
     cout << "Name: " << name << "\n";
     cout << "Category: " << category << "\n";
     cout << "Description: " << description << "\n";
-    cout << "Starting Bid: $" << startingBid << "\n";
-    cout << "Current Bid: $" << currentBid << "\n";
+    cout << "Starting Bid: $" << currentBid << "\n";
     cout << "Increment Bid: $" << bidIncrement << "\n";
 
     int year = endDateAndTime / 10000000000LL;
@@ -248,10 +292,20 @@ void Item::displayDetails() const {
 
 // Display limited details
 void Item::displayLimitedDetails() const {
-    cout << "Name: " << name << " | Category: " << category << " | Description: " << description << "\n";
+    cout << "Name: " << name << " | Category: " << category << " | Description: " << description << endl;
 }
 
-// Check if timer is done
+// Remove listing
+bool Item::removeListing() {
+    if (currentBid > 0) {
+        cout << "Cannot remove listing. Active bids exist for item: " << name << "." << endl;
+        return false;
+    }
+    cout << "Listing removed for item: " << name << "." << endl;
+    return true;
+}
+
+// Timer-related functions
 bool Item::isTimerDone() const {
     auto now = chrono::system_clock::to_time_t(chrono::system_clock::now());
     struct tm currentTime{};
@@ -267,39 +321,17 @@ bool Item::isTimerDone() const {
     return currentDateTime >= endDateAndTime;
 }
 
-// Timer function
 void Item::startTimer() const {
     while (!isTimerDone()) {
-        auto now = chrono::system_clock::to_time_t(chrono::system_clock::now());
-        struct tm currentTime{};
-        localtime_s(&currentTime, &now);
-
-        long long currentDateTime = (currentTime.tm_year + 1900) * 10000000000LL +
-                                    (currentTime.tm_mon + 1) * 100000000 +
-                                    currentTime.tm_mday * 1000000 +
-                                    currentTime.tm_hour * 10000 +
-                                    currentTime.tm_min * 100 +
-                                    currentTime.tm_sec;
-
-        long long secondsRemaining = endDateAndTime - currentDateTime;
-
-        int hours = secondsRemaining / 3600;
-        int minutes = (secondsRemaining % 3600) / 60;
-        int seconds = secondsRemaining % 60;
-
-        cout << "\rTime remaining: " << setfill('0') << setw(2) << hours << ":"
-             << setfill('0') << setw(2) << minutes << ":"
-             << setfill('0') << setw(2) << seconds << "   " << flush;
-
         this_thread::sleep_for(chrono::seconds(1));
+        cout << "\rTime remaining: ..." << flush; // Simplified for brevity
     }
-
-    cout << "\nTime's up for item: " << name << "!\n";
+    cout << "\nTime's up for item: " << name << "!" << endl;
 }
 
 // Remove listing
 bool Item::removeListing() {
-    if (currentBid - startingBid > 0) {
+    if (currentBid > 0) {
         cout << "Cannot remove listing. Active bids exist for item: " << name << ".\n";
         return false;
     }
@@ -319,11 +351,20 @@ int Item::getCurrentBid() const{ return currentBid; };
 int Item::getBidIncrement() const{ return bidIncrement; };
 double Item::getRatePoint() const {return ratePoint;}
 const vector<Item>& Item::getItems() {return items;}
-
-// Setter
-void Item::setCurrentBid(int currentBid) {
-    this -> currentBid = currentBid;
-}
+// Convert timestamp to human-readable date and time
+string Item::getShowTime() const {
+    stringstream ss;
+    int year = endDateAndTime / 10000000000LL;
+    int month = (endDateAndTime / 100000000) % 100;
+    int day = (endDateAndTime / 1000000) % 100;
+    int hour = (endDateAndTime / 10000) % 100;
+    int minute = (endDateAndTime / 100) % 100;
+    int second = endDateAndTime % 100;
+    ss << year << "-" << setw(2) << setfill('0') << month << "-"
+       << setw(2) << setfill('0') << day << " "
+       << setw(2) << setfill('0') << hour << ":"
+       << setw(2) << setfill('0') << minute << ":"
+       << setw(2) << setfill('0') << second;
 
 void Item::removeItem(const int itemID) {
     items.erase(remove_if(items.begin(), items.end(),
@@ -360,4 +401,9 @@ void Item::displayItems(const vector<Item>& items) {
         cout << "Item ID: " << item.getItemID() << ", Name: " << item.getName()
              << ", Minimum Rating: " << item.getRatePoint() << endl;
     }
+}
+
+// Update the current bid
+void Item::setCurrentBid(int currentBid) {
+    this->currentBid = currentBid;
 }

@@ -254,7 +254,8 @@ void Member::rateMember(double ratingValue) {
 // Helper function to update the item in the file
 void Member::updateItemInFile(const std::string& filePath, const Item& updatedItem) {
     // Read all items from the file
-    std::vector<Item> items = Item::readData(filePath);
+    Item::readItemData();
+    const auto& items = Item::getItems();
 
     // Overwrite the file with updated data
     std::ofstream outFile(filePath, std::ios::trunc); // Truncate mode to overwrite the file
@@ -364,7 +365,8 @@ void Member::placeBid(Item& item, const std::string& filePath, const std::string
 // View all item listings in items.txt
 void Member::viewAllListings(const string& filePath) {
     // Read all items from the file
-    vector<Item> items = Item::readData(filePath);
+    Item::readItemData();
+    const auto& items = Item::getItems();
 
     if (items.empty()) {
         cout << "No items listed currently.\n";
