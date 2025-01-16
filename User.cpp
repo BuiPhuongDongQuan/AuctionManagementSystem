@@ -1,4 +1,5 @@
 #include "User.h"
+#include "Menu.h"
 #include "functions/Function.h"
 #include <iostream>
 using namespace std;
@@ -102,6 +103,7 @@ void User::login(string username, string password){
         if(user->authentication(username, password)){
             cout << "Welcome back " << username << endl;
             user->setUsername(username);
+            Menu::memberDashboard();
         }else{
             cout << "Login failed! Username or password is incorrect." << endl;
         }

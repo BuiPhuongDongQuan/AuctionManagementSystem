@@ -132,10 +132,12 @@ void Menu::guestDashboard(){
     {
     case 1:
         Guest::viewItem(item_data);
+        guestDashboard();
         break;
     
     case 2:
         registerMenu();
+        loginMenu();
         break;
     }
 }
