@@ -68,7 +68,7 @@ vector<Member> Member::readData(const string& filename) {
     return members;
 }
 
-// Display item informations
+// Display member informations
 void Member::showInfo() const {
     cout << "========= MEMBER INFORMATION =========\n";
     cout << "Full Name: " << fullname << "\n";
@@ -187,7 +187,8 @@ void Member::topupCredit(const string& membersFilePath) {
 // Creating Listing Items
 void Member::createListing(const string& filePath) {
     string name, category, description;
-    int startingBid, currentBid, bidIncrement;
+    int itemID, memberID, startingBid, currentBid, bidIncrement;
+    double ratePoint;
     int year, month, day, hour, minute, second;
 
     cout << "===== Create New Listing =====\n";
@@ -210,6 +211,13 @@ void Member::createListing(const string& filePath) {
     cout << "Enter bid increment: ";
     cin >> bidIncrement;
 
+    cout << "Enter the minimum rating required to view this item (ratePoint, 0-5): ";
+    cin >> ratePoint;
+    if (ratePoint < 0 || ratePoint > 5) {
+        cerr << "Invalid ratePoint value. Setting to default (0.0).\n";
+        ratePoint = 0.0;
+    }
+
     // Clear the buffer before getting the next set of inputs
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
@@ -221,7 +229,7 @@ void Member::createListing(const string& filePath) {
     cin >> hour >> minute >> second;
 
     // Create the Item
-    Item newItem(name, category, description, startingBid, currentBid, bidIncrement,
+    Item newItem(itemID, memberID, name, category, description, startingBid, currentBid, bidIncrement, ratePoint,
                  year, month, day, hour, minute, second);
 
     // Convert item to string and save it to a file
