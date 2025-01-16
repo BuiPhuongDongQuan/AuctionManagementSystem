@@ -6,6 +6,7 @@
 #include <string>
 #include <vector>
 #include <sstream>
+#include "Bid.h"
 using namespace std;
 
 class Item; 
@@ -28,6 +29,7 @@ private:
     int creditPoints;
 
     vector<Item> listings;
+    vector<Bid> activeBids;
 
 public:
     Member(string username, string password, string fullname, string phoneNumber, 
@@ -43,7 +45,9 @@ public:
     void rateMember(double ratingValue);
     void updateItemInFile(const string& filePath, const Item& updatedItem);
     void updateMemberInFile(const string& filePath);
-    void placeBid(Item& item, const string& filePath, const string& membersFilePath);
+    int balanceCP()const;
+    bool placeBid(const string& auctionID, int bidAmount);
+    void finalizeBid(const string& auctionID, bool won);
     void viewListings(const string& filePath);
     void searchItems(const string& name, const string& category, int minBid, int maxBid);
     string toLower(const string& str);

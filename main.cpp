@@ -1,8 +1,8 @@
 // ! Test Item Function
-// #include "Item.h"
-// #include <iostream>
-// #include <vector>
-// #include <fstream>
+#include "Member.h"
+#include "Item.h"
+#include "Rating.h"
+#include "functions/Function.h"
 
 // using namespace std;
 
@@ -138,29 +138,52 @@
 // }
 
 // !Test Bid Class
-#include <iostream>
-#include <vector>
-#include "Bid.h"
-#include "functions/Function.h"
-using namespace std;
+// #include <iostream>
+// #include <vector>
+// #include "Bid.h"
+// #include "functions/Function.h"
+// using namespace std;
 
-int main() {
-    // Create Bid objects
-    Bid bid1("Room1","A",100,true);  // Active bid in Room1
-    Bid bid2("Room1","B",100,true);  // Active bid in Room1
-    Bid bid3("Room2","C",100,false); // Inactive bid in Room2
+// int main() {
+//     // Create Bid objects
+//     Bid bid1("Room1","A",100,true);  // Active bid in Room1
+//     Bid bid2("Room1","B",100,true);  // Active bid in Room1
+//     Bid bid3("Room2","C",100,false); // Inactive bid in Room2
 
-    // Write bids to a file
-    string filePath = "bids.txt";
-    Function::writeToFile(filePath, bid1.toString());  // Save bids to file
+//     // Write bids to a file
+//     string filePath = "bids.txt";
+//     Function::writeToFile(filePath, bid1.toString());  // Save bids to file
 
-    // Read bids from the file and display
-    vector<Bid> loadedBids = Bid::readData(filePath);
+//     // Read bids from the file and display
+//     vector<Bid> loadedBids = Bid::readData(filePath);
     
-    cout << "Loaded bids from file:\n";
-    for (const Bid& bid : loadedBids) {
-        cout << bid.toString() << endl;
-    }
+//     cout << "Loaded bids from file:\n";
+//     for (const Bid& bid : loadedBids) {
+//         cout << bid.toString() << endl;
+//     }
+
+//     return 0;
+// }
+
+// !Test Member Class With placeBid
+using namespace std;
+int main() {
+    // Create a member with initial credit points
+    Member member("dongquan", "1234646448", "Dong Quan", "0923913215", "dongquan@yahoo.com", "Passport", "082204000256", 4.1,12,200);
+
+    member.showInfo();
+
+    // Place bids
+    member.placeBid("Auction1", 120);
+    member.placeBid("Auction1", 140);
+    member.placeBid("Auction2", 40);
+
+    // Finalize auctions
+    member.finalizeBid("Auction1", true); // Member wins Auction1
+    member.finalizeBid("Auction2", false); // Member loses Auction2
+
+    // Display final credit points
+    member.showInfo();
 
     return 0;
 }
