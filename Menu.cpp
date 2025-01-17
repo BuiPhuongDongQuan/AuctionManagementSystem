@@ -47,11 +47,11 @@ void Menu::menuDisplay(){
     cout << "Semester 3 2024\n";
     cout << "AUCTION APPLICATION\n\n";
     cout << "AUCTION APPLICATION\n";
-    cout << "Group: Group No.\n";
-    cout << "XXXXXXX, Student Name\n";
-    cout << "XXXXXXX, Student Name\n";
-    cout << "XXXXXXX, Student Name\n";
-    cout << "XXXXXXX, Student Name\n\n";
+    cout << "Group: Group 12\n";
+    cout << "s3885751, Hoang Duc Phuong\n";
+    cout << "s3975939, Bui Phuong Dong Quan\n";
+    cout << "s3980424, Lam Quang Nhat\n";
+    cout << "s3978862, Nguyen Minh Khoi\n\n";
     cout << "-----Choose Your Role-----\n";
     cout << "Please let us know who you are: \n";
     cout << "1. Guest  2. Member  3. Admin\n";
