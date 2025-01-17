@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <string>
-#include <vector>
+#include <vector>   
 #include <sstream>
 #include <limits>
 #include <algorithm>
@@ -9,141 +9,119 @@
 #include "Member.h"
 #include "Item.h"
 #include "Rating.h"
+#include "Menu.h"
 #include "functions/Function.h"
 using namespace std;
 
 // Constructor
-Member::Member(){}
-Member::Member(string username = "", string password = "", string fullname = "", string phoneNumber = "", 
+Member::Member() : User(){}
+Member::Member(string memberID = "", string username = "", string password = "", string fullname = "", string phoneNumber = "", 
     string email = "", string IDType = "", string IDNumber = "", double rating = 0.0, int ratingCount = 0, int creditPoints = 0)
-    : memberID(memberID) ,username(username), password(password), fullname(fullname), phoneNumber(phoneNumber), email(email),
-    IDType(IDType), IDNumber(IDNumber), rating(rating), ratingCount(ratingCount),creditPoints(creditPoints) {}
+    : User(memberID ,username, password, fullname, phoneNumber, email,
+    IDType, IDNumber, rating, ratingCount,creditPoints) {}
 
-string Member::toString() const {
-    stringstream ss;
-    ss << memberID << "," << username << "," << password << "," << fullname << ","
-        << phoneNumber << "," << email << "," << IDType << "," << IDNumber 
-        << "," << rating << "," << ratingCount << "," << creditPoints << "\n";
-    return ss.str();
+// Login function
+void Member::login(string username, string password){
+    readData();
+    User* member = getUser(username);
+    if(member == nullptr){
+        cout << "Username not found. Please register to begin." << endl;
+    }else{
+        // Authenticate the user
+        if(member->authentication(username, password)){
+            cout << "Welcome back " << username << endl;
+            setUsername(username);
+            Menu::memberDashboard();
+        }else{
+            cout << "Login failed! Username or password is incorrect." << endl;
+            Menu::loginMenu();
+        }
+    }
 }
 
-// Method to read member information from a file
-vector<Member> Member::readData(const string& filename) {
-    vector<Member> members;
-    ifstream inFile(filename);
-
-    if (!inFile) {
-        cerr << "Error: Could not open file for reading.\n";
-        return members;
+void Member::showInfo(string username){
+    User::readData();
+    for(User member : users){
+        if(member.getUsername() == username){
+            cout << "========= MEMBER INFORMATION =========\n";
+            cout << "Full Name: " << member.getFullname() << "\n";
+            cout << "Username: " << member.getUsername() << "\n";
+            cout << "Email: " << member.getEmail() << "\n";
+            cout << "Phone Number: " << member.getPhoneNumber() << "\n";
+            cout << "ID Type: " << member.getIDType() << "\n";
+            cout << "ID Number: " << member.getIDNumber() << "\n";
+            cout << "Credit Points: " << member.getCreditPoints() << "\n";
+            cout << "Average Rating: " << member.getRating() << " (" << member.getRatedTimes() << " ratings)\n";
+            cout << "======================================\n";
+        }
     }
-
-    string line;
-    while (getline(inFile, line)) {
-        stringstream ss(line);
-        string username, password, fullname, phoneNumber, email, IDType, IDNumber;
-        double rating;
-        int ratingCount, creditPoints, memberID;
-
-        // Parse the member attributes from the line
-        ss >> memberID;
-        ss.ignore();
-        getline(ss, username, ',');
-        getline(ss, password, ',');
-        getline(ss, fullname, ',');
-        getline(ss, phoneNumber, ',');
-        getline(ss, email, ',');
-        getline(ss, IDType, ',');
-        getline(ss, IDNumber, ',');
-        ss >> rating;
-        ss.ignore();
-        ss >> ratingCount;
-        ss.ignore();
-        ss >> creditPoints;
-
-        // Add the parsed member to the vector
-        members.emplace_back(username, password, fullname, phoneNumber, email, IDType, IDNumber, rating, ratingCount, creditPoints);
-        members.back().memberID = memberID; // Ensure the member ID is set correctly
-    }
-
-    inFile.close();
-    return members;
-}
-
-// Display item informations
-void Member::showInfo() const {
-    cout << "========= MEMBER INFORMATION =========\n";
-    cout << "Full Name: " << fullname << "\n";
-    cout << "Username: " << username << "\n";
-    cout << "Email: " << email << "\n";
-    cout << "Phone Number: " << phoneNumber << "\n";
-    cout << "ID Type: " << IDType << "\n";
-    cout << "ID Number: " << IDNumber << "\n";
-    cout << "Credit Points: " << creditPoints << "\n";
-    cout << "Average Rating: " << rating << " (" << ratingCount << " ratings)\n";
-    cout << "======================================\n";
 }
 
 // Update member informations
-void Member::updateInfo(const std::string& membersFilePath) {
-    cout << "========= UPDATE MEMBER INFORMATION =========\n";
-    cout << "Select the field you want to update:\n";
-    cout << "1. Full Name\n";
-    cout << "2. Username\n";
-    cout << "3. Password\n";
-    cout << "4. Email\n";
-    cout << "5. Phone Number\n";
-    cout << "6. ID Type\n";
-    cout << "7. ID Number\n";
-    cout << "8. Exit\n";
+void Member::updateInfo(int userInput, string username) {
+    User* member = getUser(username);
+    if(member->getUserID().empty()){
+        cerr << "Error: User not found." << std::endl;
+        return;
+    }
+    // Extract old content
+    std::string oldInfo = member->getUserID() + "," + member->getUsername() + "," + member->getPassword() + "," +
+                          member->getFullname() + "," + member->getPhoneNumber() + "," + member->getEmail() + "," +
+                          member->getIDType() + "," + member->getIDNumber() + "," + to_string(member->getRating()) + "," +
+                          to_string(member->getRatedTimes()) + "," + to_string(member->getCreditPoints());
 
-    int choice;
-    do {
-        cout << "Enter your choice (1-8): ";
-        cin >> choice;
-        cin.ignore(); // Clear input buffer
-
-        switch (choice) {
+    vector<string> updateMemberInfo = Function::split(oldInfo, ',');
+    string updatedInfo;
+    string newInfo;
+        switch (userInput) {
         case 1:
-            cout << "Enter new full name (current: " << fullname << "): ";
-            getline(cin, fullname);
-            setFullName(fullname);
-            updateMemberInFile(membersFilePath);
+            cout << "Enter new full name: ";
+            getline(cin, newInfo);
+            updateMemberInfo[3] = newInfo;
+            updatedInfo = Function::vectorToCSVString(updateMemberInfo);
+            Function::modifyFile("members.txt", oldInfo, updatedInfo);
             break;
         case 2:
-            cout << "Enter new username (current: " << username << "): ";
-            getline(cin, username);
-            setUserName(username);
-            updateMemberInFile(membersFilePath);
+            cout << "Enter new username: ";
+            getline(cin, newInfo);
+            updateMemberInfo[1] = newInfo;
+            updatedInfo = Function::vectorToCSVString(updateMemberInfo);
+            Function::modifyFile("members.txt", oldInfo, updatedInfo);
             break;
         case 3:
             cout << "Enter new password: ";
-            getline(cin, password);
-            setPassword(password);
-            updateMemberInFile(membersFilePath);
+            getline(cin, newInfo);
+            updateMemberInfo[2] = newInfo;
+            updatedInfo = Function::vectorToCSVString(updateMemberInfo);
+            Function::modifyFile("members.txt", oldInfo, updatedInfo);
             break;
         case 4:
-            cout << "Enter new email (current: " << email << "): ";
-            getline(cin, email);
-            setEmail(email);
-            updateMemberInFile(membersFilePath);
+            cout << "Enter new email: ";
+            getline(cin, newInfo);
+            updateMemberInfo[5] = newInfo;
+            updatedInfo = Function::vectorToCSVString(updateMemberInfo);
+            Function::modifyFile("members.txt", oldInfo, updatedInfo);
             break;
         case 5:
-            cout << "Enter new phone number (current: " << phoneNumber << "): ";
-            getline(cin, phoneNumber);
-            setPhoneNumber(phoneNumber);
-            updateMemberInFile(membersFilePath);
+            cout << "Enter new phone number: ";
+            getline(cin, newInfo);
+            updateMemberInfo[4] = newInfo;
+            updatedInfo = Function::vectorToCSVString(updateMemberInfo);
+            Function::modifyFile("members.txt", oldInfo, updatedInfo);
             break;
         case 6:
-            cout << "Enter new ID type (current: " << IDType << "): ";
-            getline(cin, IDType);
-            setIDType(IDType);
-            updateMemberInFile(membersFilePath);
+            cout << "Enter new ID type: ";
+            getline(cin, newInfo);
+            updateMemberInfo[6] = newInfo;
+            updatedInfo = Function::vectorToCSVString(updateMemberInfo);
+            Function::modifyFile("members.txt", oldInfo, updatedInfo);
             break;
         case 7:
-            cout << "Enter new ID number (current: " << IDNumber << "): ";
-            getline(cin, IDNumber);
-            setIDNumber(IDNumber);
-            updateMemberInFile(membersFilePath);
+            cout << "Enter new ID number: ";
+            getline(cin, newInfo);
+            updateMemberInfo[7] = newInfo;
+            updatedInfo = Function::vectorToCSVString(updateMemberInfo);
+            Function::modifyFile("members.txt", oldInfo, updatedInfo);
             break;
         case 8:
             cout << "Exiting update menu.\n";
@@ -151,22 +129,30 @@ void Member::updateInfo(const std::string& membersFilePath) {
         default:
             cout << "Invalid choice! Please try again.\n";
         }
-        if (choice >= 1 && choice <= 7) {
-            cout << "Field updated successfully.\n";
-        }
-    } while (choice != 8);
-
     cout << "=============================================\n";
+
 }
 
 // Topping up credit
-void Member::topupCredit(const string& membersFilePath) {
+void Member::topupCredit(string username) {
+    User* member = getUser(username);
+    if(member->getUserID().empty()){
+        cerr << "Error: User not found." << std::endl;
+        return;
+    }
+    // Extract old content
+    std::string oldInfo = member->getUserID() + "," + member->getUsername() + "," + member->getPassword() + "," +
+                          member->getFullname() + "," + member->getPhoneNumber() + "," + member->getEmail() + "," +
+                          member->getIDType() + "," + member->getIDNumber() + "," + to_string(member->getRating()) + "," +
+                          to_string(member->getRatedTimes()) + "," + to_string(member->getCreditPoints());
+
+    vector<string> updateMemberInfo = Function::split(oldInfo, ',');
+    string updatedInfo;
     int pointsToTopup;
     char confirmation;
 
     cout << "Enter the credit points you want to top up: ";
     cin >> pointsToTopup;
-
     if (pointsToTopup <= 0) {
         cout << "Invalid amount. Please enter a positive number.\n";
         return;
@@ -174,29 +160,48 @@ void Member::topupCredit(const string& membersFilePath) {
 
     cout << "You want to top up " << pointsToTopup << " credit points. Confirm? (Y/N): ";
     cin >> confirmation;
+    cin.ignore();
 
     if (confirmation == 'Y' || confirmation == 'y') {
-        creditPoints += pointsToTopup;
-        cout << "Top-up successful! Your new credit balance is: " << creditPoints << " points.\n";
-        setCreditPoints(creditPoints);
-        updateMemberInFile(membersFilePath);
+        // Get the current credit points
+        int currentCreditPoints = member->getCreditPoints();
+
+        // Add the top-up points
+        int newCreditPoints = currentCreditPoints + pointsToTopup;
+
+        // Update the credit points in the vector
+        updateMemberInfo[10] = to_string(newCreditPoints);
+
+        // Convert the updated information back to a CSV format string
+        updatedInfo = Function::vectorToCSVString(updateMemberInfo);
+
+        // Modify the file
+        Function::modifyFile("members.txt", oldInfo, updatedInfo);
+
+        // Update the user's credit points locally
+        member->setCreditPoints(newCreditPoints);
+
     } else {
         cout << "Top-up canceled.\n";
     }
 }
 
 // Creating Listing Items
-void Member::createListing(const string& filePath) {
-    string name, category, description;
+void Member::createListing(string username) {
+    User* member = getUser(username);
+    string name, category, description, itemID;
     int startingBid, currentBid, bidIncrement;
+    double ratePoint;
     int year, month, day, hour, minute, second;
+    int countLine = Function::countLine("item.txt");
 
     cout << "===== Create New Listing =====\n";
-
+    // Create unique ID
+    string id = "I" + to_string(countLine);
     // Get item details from the user
     cout << "Enter item name: ";
-    cin.ignore(); // Clear leftover newline from input buffer
     getline(cin, name);
+    cin.ignore(); // Clear leftover newline from input buffer
 
     cout << "Enter category: ";
     getline(cin, category);
@@ -211,6 +216,13 @@ void Member::createListing(const string& filePath) {
     cout << "Enter bid increment: ";
     cin >> bidIncrement;
 
+    cout << "Enter the minimum rating required to view this item (ratePoint, 0-5): ";
+    cin >> ratePoint;
+    if (ratePoint < 0 || ratePoint > 5) {
+        cerr << "Invalid ratePoint value. Setting to default (0.0).\n";
+        ratePoint = 0.0;
+    }
+
     // Clear the buffer before getting the next set of inputs
     cin.ignore(numeric_limits<streamsize>::max(), '\n');
 
@@ -222,17 +234,12 @@ void Member::createListing(const string& filePath) {
     cin >> hour >> minute >> second;
 
     // Create the Item
-    Item newItem(name, category, description, startingBid, currentBid, bidIncrement,
-                 year, month, day, hour, minute, second);
+    string newItem = "\n" + id + "," + member->getUserID() + "," + name + "," + category + "," + description + "," + to_string(startingBid) + "," + 
+    to_string(currentBid) + "," + to_string(bidIncrement) + "," + to_string(ratePoint) + "," + to_string(year) + "/" + to_string(month) + "/" + to_string(day) + "," + to_string(hour) + ":" + to_string(minute) + ":" + to_string(second);
 
     // Convert item to string and save it to a file
-    try {
-        // Use the static method directly
-        Function::writeToFile(filePath, newItem.toString());
-        cout << "Listing created successfully!\n";
-    } catch (const exception& e) {
-        cerr << "Error creating listing: " << e.what() << endl;
-    }
+    Function::writeToFile("item.txt", newItem);
+    cout << "Listing created successfully!\n";
 }
 
 // Method to receive rating from another member
@@ -247,7 +254,8 @@ void Member::rateMember(double ratingValue) {
 // Helper function to update the item in the file
 void Member::updateItemInFile(const std::string& filePath, const Item& updatedItem) {
     // Read all items from the file
-    std::vector<Item> items = Item::readData(filePath);
+    Item::readItemData();
+    const auto& items = Item::getItems();
 
     // Overwrite the file with updated data
     std::ofstream outFile(filePath, std::ios::trunc); // Truncate mode to overwrite the file
@@ -271,7 +279,7 @@ void Member::updateItemInFile(const std::string& filePath, const Item& updatedIt
 // Helper function to update the member in the file
 void Member::updateMemberInFile(const std::string& filePath) {
     // Read all members from the file
-    std::vector<Member> members = Member::readData(filePath);
+    User::readData();
 
     // Overwrite the file with updated data
     std::ofstream outFile(filePath, std::ios::trunc); // Truncate mode to overwrite the file
@@ -279,8 +287,8 @@ void Member::updateMemberInFile(const std::string& filePath) {
         throw std::runtime_error("Error: Could not open file for writing.");
     }
 
-    for (const auto& member : members) {
-        if (member.getMemberID() == this->getMemberID()) {
+    for (const auto& member : users) {
+        if (member.getUserID() == this->getUserID()) {
             // Write the updated member to the file
             outFile << toString();
         } else {
@@ -292,72 +300,74 @@ void Member::updateMemberInFile(const std::string& filePath) {
     outFile.close();
 }
 
-// Method to place bid
-void Member::placeBid(Item& item, const std::string& filePath, const std::string& membersFilePath) {
-    while (true) {
-        cout << "\n========= Place a Bid =========\n";
-        cout << "Your current credit points: " << creditPoints << "\n";
-        cout << "Current highest bid: $" << item.getCurrentBid() << "\n";
-        cout << "Minimum bid increment: $" << item.getBidIncrement() << "\n";
-
-        // Calculate the minimum bid amount
-        int minBid = item.getCurrentBid() + item.getBidIncrement();
-
-        cout << "Enter your bid (minimum $" << minBid << "): ";
-        int bid;
-        cin >> bid;
-
-        // Input validation
-        if (cin.fail() || bid < minBid) {
-            cout << "Invalid bid! Your bid must be at least $" << minBid << ". Try again.\n";
-            cin.clear(); // Clear error flags
-            cin.ignore(numeric_limits<streamsize>::max(), '\n'); // Ignore invalid input
-            continue;
+// Get available credit points (credit points minus active bids)
+int Member::balanceCP() const {
+    int usedPoints = 0;
+    for (const auto& bid : activeBids) {
+        if (bid.getActiveBid()) {
+            usedPoints += bid.getActiveBid();
         }
+    }
+    return creditPoints - usedPoints;
+}
 
-        // Check if the user has enough credit points
-        if (bid - item.getCurrentBid() > creditPoints) {
-            cout << "Insufficient credit points! You only have $" << creditPoints << ".\n";
-            cout << "Please add more credits or lower your bid.\n";
-            continue;
+// Place a bid
+bool Member::placeBid(const string& auctionID, int bidAmount) {
+    // Check if member has an active bid in this auction
+    for (auto& bid : activeBids) {
+        if (bid.isActiveBid(auctionID, memberID)) {
+            // Update existing bid if the new amount is higher
+            if (bidAmount > bid.getActiveBid()) {
+                int requiredPoints = bidAmount - bid.getActiveBid(); // Additional points required
+                if (balanceCP() >= requiredPoints) {  // Use Member's balanceCP method
+                    bid.setActiveBid(bidAmount);
+                    cout << "Bid updated successfully in auction " << auctionID << ". New bid: " << bidAmount << " CP.\n";
+                    return true;
+                } else {
+                    cout << "Insufficient balance to increase the bid.\n";
+                    return false;
+                }
+            } else {
+                cout << "New bid amount must be higher than the current bid.\n";
+                return false;
+            }
         }
+    }
 
-        // Deduct bid amount from user's credit points
-        creditPoints -= bid - item.getCurrentBid();
+    // New bid
+    if (balanceCP() >= bidAmount) {  // Use Member's balanceCP method
+        activeBids.emplace_back(auctionID, memberID, bidAmount, true);
+        cout << "Bid placed successfully in auction " << auctionID << ". Amount: " << bidAmount << " CP.\n";
+        return true;
+    } else {
+        cout << "Insufficient balance to place the bid.\n";
+        return false;
+    }
+}
 
-        // Update the item's current bid to the new bid
-        setCreditPoints(creditPoints);
-        item.setCurrentBid(bid);
-
-        // Update the item in the file
-        updateItemInFile(filePath, item);
-
-        // Update the member's data in the members file
-        updateMemberInFile(membersFilePath);
-
-        cout << "Congratulations! You are now the highest bidder with a bid of $" << bid << ".\n";
-
-        if(creditPoints <= 0) {
-            cout << "You are out of Credit Point! Please add more credits"; 
-            break;
-        }
-
-        // Ask the user if they want to place another bid
-        char choice;
-        cout << "Do you want to place another bid? (y/n): ";
-        cin >> choice;
-
-        if (choice == 'n' || choice == 'N') {
-            cout << "Thank you for bidding. Good luck!\n";
+// Handle auction result
+void Member::finalizeBid(const string& auctionID, bool won) {
+    for (auto& bid : activeBids) {
+        if (bid.isActiveBid(auctionID, memberID)) {
+            if (won) {
+                creditPoints -= bid.getActiveBid(); // Deduct bid amount
+                cout << "You won the auction in " << auctionID << "! Deducted " << bid.getActiveBid() << " CP.\n";
+            } else {
+                creditPoints += bid.getActiveBid(); // Refund bid amount
+                cout << "You lost the auction in " << auctionID << ". Refunded " << bid.getActiveBid() << " CP.\n";
+            }
+            bid.setIsActive(false); // Mark bid as inactive
             break;
         }
     }
 }
 
+
 // View all item listings in items.txt
-void Member::viewAllListings(const string& filePath) {
+void Member::viewListings(const string& filePath) {
     // Read all items from the file
-    vector<Item> items = Item::readData(filePath);
+    Item::readItemData();
+    const auto& items = Item::getItems();
 
     if (items.empty()) {
         cout << "No items listed currently.\n";
@@ -418,41 +428,4 @@ void Member::searchItems(const string& name, const string& category, int minBid,
 
 
 // Getter 
-int Member::getMemberID() const { return memberID; }
-string Member::getUsername() const { return username; }
-string Member::getPassword() const { return password; }
-string Member::getFullname() const { return fullname; }
-string Member::getPhoneNumber() const { return phoneNumber; }
-string Member::getEmail() const { return email; }
-string Member::getIDType() const { return IDType; }
-string Member::getIDNumber() const { return IDNumber; }
-double Member::getRating() const { return rating; }
-int Member::getRatingCount() const { return ratingCount; }
-int Member::getCreditPoints() const { return creditPoints; }
 vector<Item> Member::getListings() const { return listings; }
-
-// Setter
-void Member::setCreditPoints(int creditPoints) {
-    this -> creditPoints = creditPoints;
-}
-void Member::setFullName(string fullname){
-    this -> fullname = fullname;
-}
-void Member::setUserName(string username){
-    this -> username = username;
-}
-void Member::setPassword(string password){
-    this -> password = password;
-}
-void Member::setEmail(string email){
-    this -> email = email;
-}
-void Member::setPhoneNumber(string phoneNumber){
-    this -> phoneNumber = phoneNumber;
-}
-void Member::setIDType(string IDType){
-    this -> IDType = IDType;
-}
-void Member::setIDNumber(string IDNumber){
-    this -> IDNumber = IDNumber;
-}

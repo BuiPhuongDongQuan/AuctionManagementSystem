@@ -30,5 +30,8 @@ class Menu{
         static void adminDashboard();
         static void guestDashboard();
         static void memberDashboard();
+        static void memberInfoDashboard();
+        static void memberUpdateDashboard();
+        static void memberTopupDashboard();
 };
 #endif

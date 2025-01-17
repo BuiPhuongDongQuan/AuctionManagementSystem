@@ -79,9 +79,11 @@ void Menu::loginMenu(){
     cout << "-----Login-----\n";
     cout << "Enter your username: ";
     cin >> username;
+    cin.ignore();
     cout << "Enter your password: ";
     cin >> password;
-    User::login(username, password);
+    cin.ignore();
+    member.login(username, password);
 }
 
 // Admin Login Menu
@@ -132,6 +134,7 @@ void Menu::guestDashboard(){
     {
     case 1:
         Guest::viewItem(item_data);
+        guestDashboard();
         break;
     
     case 2:
@@ -165,4 +168,57 @@ void Menu::registerMenu(){
     cin.ignore();
 
     User::guestRegister(username, password, fullname, phoneNumber, email, IDType, IDNumber);
+}
+
+// Member Dashboard
+void Menu::memberDashboard(){
+    cout << "-----Member Dashboard-----\n";
+    cout << "This is your menu:\n";
+    cout << "1. View your infomation\n";
+    cout << "2. Update infomation\n";
+    cout << "3. Top up credit points\n";
+    cout << "4. Creating item\n";
+    int choice = Menu::handleUserInput(1, 4);
+    switch (choice)
+    {
+    case 1:
+        memberInfoDashboard();
+        break;
+    case 2:
+        memberUpdateDashboard();
+        break;
+    case 3:
+        memberTopupDashboard();
+        break;
+    case 4:
+        member.createListing(member.getUsername());
+        Menu::memberDashboard;
+    default:
+        break;
+    }
+}
+
+void Menu::memberInfoDashboard(){
+    member.showInfo(member.getUsername());
+    Menu::memberDashboard();
+}
+
+void Menu::memberUpdateDashboard(){
+    cout << "========= UPDATE MEMBER INFORMATION =========\n";
+    cout << "Select the field you want to update:\n";
+    cout << "1. Full Name\n";
+    cout << "2. Username\n";
+    cout << "3. Password\n";
+    cout << "4. Email\n";
+    cout << "5. Phone Number\n";
+    cout << "6. ID Type\n";
+    cout << "7. ID Number\n";
+    cout << "8. Exit\n";
+    int choice = Menu::handleUserInput(1, 8);
+    member.updateInfo(choice, member.getUsername());
+}
+
+void Menu::memberTopupDashboard(){
+    member.topupCredit(member.getUsername());
+    Menu::memberDashboard();
 }

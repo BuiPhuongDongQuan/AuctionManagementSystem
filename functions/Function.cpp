@@ -94,3 +94,67 @@ void Function::readAllLine(const string filePath){
         cerr << "An error occurred: " << e.what() << endl;
     }
 }
+
+void Function::modifyFile(const std::string& filePath, const std::string& oldString, const std::string& newString) {
+    std::ifstream fileToBeModified(filePath);
+    if (!fileToBeModified.is_open()) {
+        std::cerr << "Error: Could not open file " << filePath << " for reading.\n";
+        return;
+    }
+
+    // Read all lines of the file into oldContent
+    std::string oldContent;
+    std::string line;
+    while (std::getline(fileToBeModified, line)) {
+        oldContent += line + "\n";  // Preserve newline characters
+    }
+    fileToBeModified.close();
+
+    // Replace all occurrences of oldString with newString
+    size_t pos = 0;
+    bool found = false;
+    while ((pos = oldContent.find(oldString, pos)) != std::string::npos) {
+        found = true;
+        oldContent.replace(pos, oldString.length(), newString);
+        pos += newString.length();
+    }
+
+    // Debug: Check if the old string was found
+    if (!found) {
+        std::cerr << "Error: Old string not found in the file.\n";
+        return;
+    }
+
+    // Write the modified content back to the file
+    std::ofstream writer(filePath);
+    if (!writer.is_open()) {
+        std::cerr << "Error: Could not open file " << filePath << " for writing.\n";
+        return;
+    }
+
+    writer << oldContent;
+    writer.close();
+
+    std::cout << "File successfully updated.\n";
+}
+
+vector<string> Function::split(const string& str, char delimiter) {
+    vector<string> tokens;
+    string token;
+    istringstream tokenStream(str);
+    while (std::getline(tokenStream, token, delimiter)) {
+        tokens.push_back(token);
+    }
+    return tokens;
+}
+
+string Function::vectorToCSVString(const vector<string>& data) {
+    string csvString;
+    for (size_t i = 0; i < data.size(); ++i) {
+        csvString += data[i];
+        if (i < data.size() - 1) {
+            csvString += ",";
+        }
+    }
+    return csvString;
+}

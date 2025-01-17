@@ -1,5 +1,7 @@
 #include "User.h"
+#include "Menu.h"
 #include "functions/Function.h"
+#include <sstream>
 #include <iostream>
 using namespace std;
 
@@ -9,34 +11,43 @@ vector<User>User::users;
 
 User::User(){}
 
-User::User(int userID, string username, string password, string fullname, string phoneNumber, string email,string IDType, string IDNumber, double rating, int ratedTimes, int creditPoints)
-    : userID(userID), username(username), password(password), fullname(fullname), phoneNumber(phoneNumber), email(email), IDType(IDType), IDNumber(IDNumber), creditPoints(creditPoints){}
+User::User(string userID, string username, string password, string fullname, string phoneNumber, string email,string IDType, string IDNumber, double rating, int ratedTimes, int creditPoints)
+    : userID(userID), username(username), password(password), fullname(fullname), phoneNumber(phoneNumber), email(email), IDType(IDType), IDNumber(IDNumber), rating(rating), ratedTimes(ratedTimes), creditPoints(creditPoints){}
 
 
 // Getters
-string User::getUsername(){
-    return username;
-}
-
-string User::getPassword(){
-    return password;
-}
-
-int User::getCreditPoints(){
-    return creditPoints;
-}
+string User::getUserID() const{return userID;}
+string User::getUsername() const{return username;}
+string User::getPassword() const{return password;}
+string User::getFullname() const{return fullname;}
+string User::getPhoneNumber() const{return phoneNumber;}
+string User::getEmail() const{return email;}
+string User::getIDType() const{return IDType;}
+string User::getIDNumber() const{return IDNumber;}
+double User::getRating() const{return rating;}
+int User::getRatedTimes() const{return ratedTimes;}
+int User::getCreditPoints() const{return creditPoints;}
 
 // Setters
-void User::setUsername(string username){
-    this->username = username;
-}
+void User::setUserID(string userID){this->userID = userID;}
+void User::setUsername(string username){this->username = username;}
+void User::setPassword(string password){this->password = password;}
+void User::setFullname(string fullname){this->fullname = fullname;}
+void User::setPhoneNumber(string phoneNumber){this->phoneNumber = phoneNumber;}
+void User::setEmail(string email){this->email = email;}
+void User::setIDType(string IDType){this->IDType = IDType;}
+void User::setIDNumber(string IDNumber){this->IDNumber = IDNumber;}
+void User::setRating(double rating){this->rating = rating;}
+void User::setRatedTimes(int ratedTimes){this->ratedTimes = ratedTimes;}
+void User::setCreditPoints(int creditPoints){this->creditPoints = creditPoints;}
 
-void User::setPassword(string password){
-    this->password = password;
-}
 
-void User::setCreditPoints(int creditPoints){
-    this->creditPoints = creditPoints;
+string User::toString() const{
+    stringstream ss;
+    ss << userID << "," << username << "," << password << "," << fullname << ","
+        << phoneNumber << "," << email << "," << IDType << "," << IDNumber 
+        << "," << rating << "," << ratedTimes << "," << creditPoints << "\n";
+    return ss.str();
 }
 
 void User::readData(){
@@ -65,10 +76,10 @@ void User::readData(){
     }
 
     // Populate the users vector with User objects
-    for (size_t i = 1; i < rowCount; ++i) { 
+    for (size_t i = 0; i < countLine - 1; ++i) { 
         try {
-            users.emplace_back(stoi(userID[i]), username[i], password[i], fullname[i], phoneNumber[i], email[i], 
-                               IDType[i], IDNumber[i], stod(rating[i]), stoi(ratedTimes[i]), stoi(creditPoints[i])); // Using std::stoi for int conversion
+            users.emplace_back(userID[i], username[i], password[i], fullname[i], phoneNumber[i], email[i], 
+                               IDType[i], IDNumber[i], stod(rating[i]), stoi(ratedTimes[i]), stoi(creditPoints[i]));
         } catch (const std::exception& e) {
             std::cerr << "Error processing row " << i << ": " << e.what() << std::endl;
             continue;  // Skip this row and continue with the next one
@@ -89,23 +100,6 @@ User* User::getUser(string username){
         }
     }
     return nullptr; // Return null if username is not match
-}
-
-// Login function
-void User::login(string username, string password){
-    readData();
-    User* user = getUser(username);
-    if(user == nullptr){
-        cout << "Username not found. Please register to begin." << endl;
-    }else{
-        // Authenticate the user
-        if(user->authentication(username, password)){
-            cout << "Welcome back " << username << endl;
-            user->setUsername(username);
-        }else{
-            cout << "Login failed! Username or password is incorrect." << endl;
-        }
-    }
 }
 
 // Check password is strong or not
@@ -155,4 +149,5 @@ void User::guestRegister(string username, string password, string fullname, stri
     int ratedTimes = 0;
     string newMember = "\n" + id + ","+ username + "," + password + "," + fullname + "," + phoneNumber + "," + email + "," + IDType + "," + IDNumber + "," + to_string(rating) + "," + to_string(ratedTimes)+ "," + to_string(creditPoints);
     Function::writeToFile(user_data, newMember);
+    Menu::loginMenu();
 }
