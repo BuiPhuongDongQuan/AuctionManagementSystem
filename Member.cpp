@@ -1,10 +1,6 @@
 // TODO: Member::Filter member who can see item base on rating score
 // TODO: Member::viewListing must include minimum buyer rating score and highest bidder
 // TODO: Member::Repair placeBid, sufficient credit points to cover all their ongoing bids before allowing any new bids.
-// TODO: Bid::activeBid
-// TODO: User::Start with a default rating of 3 for both their seller and buyer roles
-// TODO: Item::In Item txt, we need to have memberID to know what is the highest/latest bidder, after per Bid update who is the latest/highest 
-// TODO: Item::Need to have ratePoint to make sure that customer who satisfy with the rating that seller set
 // TODO: Rating::About rating seller and buyer, we have menu about rate buyer and seller, in this menu, we show the buyer and seller to rate
 // TODO: Auction::CP deducted from the winner’s account and transferred to the seller’s account upon conclusion of the auction
 #include <iostream>
@@ -18,6 +14,7 @@
 #include "Member.h"
 #include "Item.h"
 #include "Rating.h"
+#include "Bid.h"
 #include "functions/Function.h"
 using namespace std;
 
@@ -309,68 +306,73 @@ void Member::updateMemberInFile(const std::string& filePath) {
     outFile.close();
 }
 
-// Get available credit points (credit points minus active bids)
-int Member::balanceCP() const {
-    int usedPoints = 0;
-    for (const auto& bid : activeBids) {
-        if (bid.getActiveBid()) {
-            usedPoints += bid.getActiveBid();
+// Helper function to update credit points in the file based on memberID
+void Member::updateMemberCreditPointsInFile(const string& filePath) {
+    // Read all members from the file
+    vector<Member> members = Member::readData(filePath);
+
+    // Open the file to overwrite with updated credit points
+    ofstream outFile(filePath, ios::trunc); // Truncate mode to overwrite
+    if (!outFile.is_open()) {
+        throw runtime_error("Error: Could not open file for writing.");
+    }
+
+    for (auto& member : members) {
+        if (member.getMemberID() == this->getMemberID()) {
+            // Update the member's credit points in the file
+            member.setCreditPoints(creditPoints); // Assuming a setCreditPoints function exists
+            outFile << member.toString();
+        } else {
+            // Write other members without modification
+            outFile << member.toString();
         }
     }
-    return creditPoints - usedPoints;
+
+    outFile.close();
+    cout << "Credit points updated successfully in the file.\n";
 }
 
-// Place a bid
-bool Member::placeBid(const string& auctionID, int bidAmount) {
-    // Check if member has an active bid in this auction
-    for (auto& bid : activeBids) {
-        if (bid.isActiveBid(auctionID, to_string(memberID))) {
-            // Update existing bid if the new amount is higher
-            if (bidAmount > bid.getActiveBid()) {
-                int requiredPoints = bidAmount - bid.getActiveBid(); // Additional points required
-                if (balanceCP() >= requiredPoints) {  // Use Member's balanceCP method
-                    bid.setActiveBid(bidAmount);
-                    cout << "Bid updated successfully in auction " << auctionID << ". New bid: " << bidAmount << " CP.\n";
-                    return true;
-                } else {
-                    cout << "Insufficient balance to increase the bid.\n";
-                    return false;
-                }
-            } else {
-                cout << "New bid amount must be higher than the current bid.\n";
-                return false;
-            }
-        }
-    }
+// TODO: Not check it read memberID??
+// TODO: entries based write in the same line not line by line
+// TODO: notify if user dont have enough money
+// Method to place bid
+void Member::placeBid(string& auctionID, int memberID, int bidAmount, unordered_map<string, int>& previousBids, int currentBid, const string& filePath) {
+    const string fileMemberPath = "bids.txt";
+    Bid bidInstance;
+    string memberIDStr = to_string(memberID);
+    bool isActive = bidInstance.isActiveBid(auctionID, memberID, filePath);
 
-    // New bid
-    if (balanceCP() >= bidAmount) {  // Use Member's balanceCP method
-        activeBids.emplace_back(auctionID, to_string(memberID), bidAmount, true);
-        cout << "Bid placed successfully in auction " << auctionID << ". Amount: " << bidAmount << " CP.\n";
-        return true;
+    // Check if the bid is already active for this auction and member
+    if (isActive) {
+        int previousBid = previousBids[memberIDStr];
+        int bidDifference = bidAmount - previousBid; // Calculate difference
+        creditPoints -= bidDifference;              // Adjust credit points
+        previousBids[memberIDStr] = bidAmount;      // Update the bid amount
+
+        // Update the active bid in the file
+        Bid updatedBid(auctionID, memberID, bidAmount, "true");
+        try {
+            Function::writeToFile(filePath, updatedBid.toString());
+            cout << "Bid updated successfully!\n";
+        } catch (const exception& e) {
+            cerr << "Error updating bid: " << e.what() << endl;
+        }
     } else {
-        cout << "Insufficient balance to place the bid.\n";
-        return false;
-    }
-}
-
-// Handle auction result
-void Member::finalizeBid(const string& auctionID, bool won) {
-    for (auto& bid : activeBids) {
-        if (bid.isActiveBid(auctionID, to_string(memberID))) {
-            if (won) {
-                creditPoints -= bid.getActiveBid(); // Deduct bid amount
-                cout << "You won the auction in " << auctionID << "! Deducted " << bid.getActiveBid() << " CP.\n";
-            } else {
-                creditPoints += bid.getActiveBid(); // Refund bid amount
-                cout << "You lost the auction in " << auctionID << ". Refunded " << bid.getActiveBid() << " CP.\n";
-            }
-            bid.setIsActive(false); // Mark bid as inactive
-            break;
+        // Create a new bid if none exists
+        Bid newBid(auctionID, memberID, currentBid, "true");
+        try {
+            Function::writeToFile(filePath, newBid.toString());
+            cout << "New bid created successfully!\n";
+        } catch (const exception& e) {
+            cerr << "Error creating new bid: " << e.what() << endl;
         }
-    }
-}
 
+        // Deduct credit points and update previous bids
+        creditPoints -= currentBid;
+        previousBids[memberIDStr] = bidAmount;
+    }
+    updateMemberCreditPointsInFile(filePath);
+}
 
 // View all item listings in items.txt
 void Member::viewListings(const string& filePath) {
@@ -434,7 +436,6 @@ void Member::searchItems(const string& name, const string& category, int minBid,
         }
     }
 }
-
 
 // Getter 
 int Member::getMemberID() const { return memberID; }

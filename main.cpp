@@ -1,37 +1,44 @@
 // ! Test Item Function
-#include "Item.h"
 #include <iostream>
+#include <unordered_map>
 #include <vector>
+#include "Member.h"
+#include "Item.h"
+#include "Auction.h"
+#include "Item.h"
+#include "Rating.h"
+#include "Bid.h"
+#include "functions/Function.h"
 #include <fstream>
 
 using namespace std;
 
-int main() {
-    // Set item data file
-    const string filePath = "item.txt";
-    Item::setItemData(filePath);
+// int main() {
+//     // Set item data file
+//     const string filePath = "item.txt";
+//     Item::setItemData(filePath);
 
-    // Test constructor and display details
-    Item item(1, "Laptop", "Electronics", "A high-end gaming laptop", 
-               1000, 1000, 50, 4.5, 2025, 1, 15, 12, 0, 0);
-    Item item2(2, "Smartphone", "Electronics", "A flagship smartphone", 
-               800, 800, 25, 3.0, 2025, 2, 1, 10, 30, 0);
+//     // Test constructor and display details
+//     Item item(1, "Laptop", "Electronics", "A high-end gaming laptop", 
+//                1000, 1000, 50, 4.5, 2025, 1, 15, 12, 0, 0);
+//     Item item2(2, "Smartphone", "Electronics", "A flagship smartphone", 
+//                800, 800, 25, 3.0, 2025, 2, 1, 10, 30, 0);
 
-    // Test toString()
-    cout << "\nTesting toString()\n";
-    cout << "Item as string: " << item.toString();
-    cout << "Item as string: " << item2.toString();
+//     // Test toString()
+//     cout << "\nTesting toString()\n";
+//     cout << "Item as string: " << item.toString();
+//     cout << "Item as string: " << item2.toString();
 
-    // Test writeToFile()
-    cout << "\nTesting writeToFile()\n";
-    Item::writeToFile(filePath, item.toString());
-    Item::writeToFile(filePath, item2.toString());
+//     // Test writeToFile()
+//     cout << "\nTesting writeToFile()\n";
+//     Item::writeToFile(filePath, item.toString());
+//     Item::writeToFile(filePath, item2.toString());
 
-    // Simulate a buyer with rating 3.5
-    double buyerRating = 3.5;
-    cout << "Items visible to buyer with rating " << buyerRating << ":\n";
-    vector<Item> visibleItems = Item::getVisibleItems(buyerRating);
-    Item::displayItems(visibleItems);
+//     // Simulate a buyer with rating 3.5
+//     double buyerRating = 3.5;
+//     cout << "Items visible to buyer with rating " << buyerRating << ":\n";
+//     vector<Item> visibleItems = Item::getVisibleItems(buyerRating);
+//     Item::displayItems(visibleItems);
 
     // Test readItemData()
     //cout << "\nTesting readItemData()\n";
@@ -76,8 +83,8 @@ int main() {
     // remove(filePath.c_str());
 
     //cout << "\nAll tests completed.\n";
-    return 0;
-}
+//     return 0;
+// }
 
 // ! Test Member Function
 // #include <iostream>
@@ -320,24 +327,98 @@ int main() {
 // }
 
 // !Test Member Class With placeBid
-using namespace std;
 int main() {
+    // File path for bid storage
+    const string filePath = "bids.txt";
+
+    // Clear or initialize the file
+    ofstream clearFile(filePath, ios::trunc);
+    clearFile.close();
+
     // Create a member with initial credit points
-    Member member("dongquan", "1234646448", "Dong Quan", "0923913215", "dongquan@yahoo.com", "Passport", "082204000256", 4.1,12,200);
+    Member member1("user1", "pass123", "John Doe", "1234567890", "john@example.com", "IDCard", "A12345678", 4.5, 10, 100);
+    Member member2("user2", "pass456", "Jane Smith", "0987654321", "jane@example.com", "Passport", "B98765432", 4.8, 15, 200);
 
-    member.showInfo();
+    // Test case 1: Member 1 places the first bid
+    cout << "Test Case 1: Member 1 places the first bid\n";
+    unordered_map<string, int> previousBids1; // No previous bids
+    std::string auctionID1 = "A123";
+    std::string auctionID2 = "A456";
+    member1.placeBid(auctionID1, 001, 300, previousBids1, 300, filePath);
 
-    // Place bids
-    member.placeBid("Auction1", 120);
-    member.placeBid("Auction1", 140);
-    member.placeBid("Auction2", 40);
 
-    // Finalize auctions
-    member.finalizeBid("Auction1", true); // Member wins Auction1
-    member.finalizeBid("Auction2", false); // Member loses Auction2
+    // Test case 2: Member 1 updates the bid on the same auction
+    cout << "\nTest Case 2: Member 1 updates the bid\n";
+    member1.placeBid(auctionID1, 001, 400, previousBids1, 400, filePath);
+    cout << "Remaining credit points (Member 1): " << member1.getCreditPoints() << endl;
 
-    // Display final credit points
-    member.showInfo();
+    // Test case 3: Member 2 places a bid on the same auction
+    cout << "\nTest Case 3: Member 2 places a new bid\n";
+    unordered_map<string, int> previousBids2; // No previous bids for member 2
+    member2.placeBid(auctionID1, 002, 350, previousBids2, 450, filePath);
+    cout << "Remaining credit points (Member 2): " << member2.getCreditPoints() << endl;
+
+    // Test case 4: Member 1 places a bid on a different auction
+    cout << "\nTest Case 4: Member 1 places a bid on a different auction\n";
+    member1.placeBid(auctionID2, 001, 200, previousBids1, 500, filePath);
+    cout << "Remaining credit points (Member 1): " << member1.getCreditPoints() << endl;
+
+    // Verify file content
+    cout << "\nContent of bids.txt:\n";
+    ifstream inFile(filePath);
+    if (inFile.is_open()) {
+        string line;
+        while (getline(inFile, line)) {
+            cout << line << endl;
+        }
+        inFile.close();
+    } else {
+        cerr << "Error: Unable to open the file.\n";
+    }
 
     return 0;
 }
+
+// !Test calculateBidDifference in Bid class
+// int main() {
+//     // Simulate previous bids
+//     unordered_map<string, int> previousBids;
+
+//     // Sample bids
+//     int diffA1 = Bid::calculateBidDifference("A", 100, previousBids);
+//     int diffB1 = Bid::calculateBidDifference("B", 200, previousBids);
+//     int diffC1 = Bid::calculateBidDifference("C", 250, previousBids);
+
+//     int diffA2 = Bid::calculateBidDifference("A", 300, previousBids);
+//     int diffB2 = Bid::calculateBidDifference("B", 350, previousBids);
+
+//     // Print results
+//     cout << "A: New Bid = 300, Previous Bid = 100, Difference = " << diffA2 << endl;
+//     cout << "B: New Bid = 350, Previous Bid = 200, Difference = " << diffB2 << endl;
+
+//     return 0;
+// }
+
+// int main() {
+//     // Create a Bid object
+//     const string filePath = "bids.txt";
+
+//     string auctionID = "A123";
+//     int memberID = 101;
+//     int activeBid = 200; // Some example bid amount
+//     bool isActive = true; // Active bid status
+
+//     Bid bid(auctionID, memberID, activeBid, isActive); // Assuming constructor like this
+
+//     // Get the string representation of the bid
+//     string bidString = bid.toString();
+//     Function::writeToFile(filePath, bid.toString());
+
+//     // Output the result to check if it's formatted correctly
+//     cout << "Bid as string: " << bidString << endl;
+
+//     // Check the expected output format
+//     // Expected output: A123,101,200,true
+
+//     return 0;
+// }
