@@ -1,0 +1,5 @@
+ID,username,passport,fullname,phoneNumber,email,IDType,IDNumber,rating,ratedTimes,creditPoints
+U1,minhkhoi,Minhkhoi123@!,KHOIOIOIO,123456789,minhkhoi@gmail.com,Paspo,123432,3.000000,0,5
+U2,khoiminh,Khoiminh123@!,Khoi Minh,123456789,khoiminh@gmail.com,Passport,P1234,3.000000,0,0
+U3,dongquan,DongQuan123@!,Dong Quan,12345687,dongquan@gmail.com,Passport,P12345,3.000000,0,0
+U4,quangnhat,Quangnhat123@!,Dong Quan,123456789,quang@gmail.com,Passport,P12345,3.000000,0,10
