@@ -1,4 +1,2 @@
-1,1,Laptop,Electronics,A high-end gaming laptop,1000,1000,50,4.520250115120000
-
-2,2,Smartphone,Electronics,A flagship smartphone,800,800,25,320250201103000
-
+itemID,sellerID,name,category,desc,startBid,currBid,incrBid,rating,date,time
+I1,U1,Bike,vehicles,2 wheels,50,50,1,1.000000,2025/11/11,20:10:00

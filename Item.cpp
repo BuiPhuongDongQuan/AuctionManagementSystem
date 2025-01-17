@@ -18,15 +18,8 @@ vector<Item>Item::items;
 int Item::nextItemID = 1;
         
 // Constructor
-Item::Item(int memberID, string name, string category, string description,
-           int startingBid, int currentBid, int bidIncrement, double ratePoint, int year, int month, int day,
-           int hour, int minute, int second)
-    : itemID(nextItemID++), memberID(memberID), name(name), category(category), description(description),
-      startingBid(startingBid), currentBid(currentBid), bidIncrement(bidIncrement), ratePoint(ratePoint) {
-    endDateAndTime = (year * 10000000000LL) + (month * 100000000) + (day * 1000000) +
-                     (hour * 10000) + (minute * 100) + second;
-}
 
+Item::Item(){}
 Item::Item(int itemID, int memberID, string name, string category, string description,
            int startingBid, int currentBid, int bidIncrement, double ratePoint, int year, int month, int day,
            int hour, int minute, int second)

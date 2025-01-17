@@ -27,13 +27,11 @@ private:
 
 public:
     // Constructor
-    Item(int memberID, string name, string category, string description,
-         int startingBid, int currentBid, int bidIncrement, double ratePoint, int year, int month, int day,
-         int hour, int minute, int second);
-
+    Item();    
     Item(int itemID, int memberID, string name, string category, string description,
          int startingBid, int currentBid, int bidIncrement, double ratePoint, int year, int month, int day,
          int hour, int minute, int second);
+
     // Methods
     static bool updateCurrentBidByID(const int itemID, int newBid);
     void addListing();
