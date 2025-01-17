@@ -345,7 +345,7 @@ int main() {
     std::string auctionID1 = "A123";
     std::string auctionID2 = "A456";
     member1.placeBid(auctionID1, 001, 300, previousBids1, 300, filePath);
-
+    cout << "Remaining credit points (Member 1): " << member1.getCreditPoints() << endl;
 
     // Test case 2: Member 1 updates the bid on the same auction
     cout << "\nTest Case 2: Member 1 updates the bid\n";
@@ -355,12 +355,12 @@ int main() {
     // Test case 3: Member 2 places a bid on the same auction
     cout << "\nTest Case 3: Member 2 places a new bid\n";
     unordered_map<string, int> previousBids2; // No previous bids for member 2
-    member2.placeBid(auctionID1, 002, 350, previousBids2, 450, filePath);
+    member2.placeBid(auctionID1, 002, 80, previousBids2, 450, filePath);
     cout << "Remaining credit points (Member 2): " << member2.getCreditPoints() << endl;
 
     // Test case 4: Member 1 places a bid on a different auction
     cout << "\nTest Case 4: Member 1 places a bid on a different auction\n";
-    member1.placeBid(auctionID2, 001, 200, previousBids1, 500, filePath);
+    member1.placeBid(auctionID2, 001, 100, previousBids1, 500, filePath);
     cout << "Remaining credit points (Member 1): " << member1.getCreditPoints() << endl;
 
     // Verify file content

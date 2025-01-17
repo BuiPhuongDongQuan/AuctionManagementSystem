@@ -35,7 +35,7 @@ vector<Bid> Bid::readData(const string& filePath) {
 
         getline(ss, auctionID, ',');
         ss >> memberID;
-        ss.ignore(); 
+        ss.ignore();
         ss >> activeBid;
         ss.ignore();  
         getline(ss, activeStr);
