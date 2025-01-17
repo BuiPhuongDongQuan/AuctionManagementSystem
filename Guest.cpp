@@ -22,12 +22,26 @@ void Guest::viewItem(string filePath){
         cout << string(50, '-') << endl; // Divider line for the table
 
         string line;
+        bool isHeader = true;
+
         while (getline(file, line)) {
+            // Skip the header row
+            if (isHeader) {
+                isHeader = false;
+                continue;
+            }
+
+            // Skip blank lines
+            if (line.empty()) {
+                continue;
+            }
             istringstream iss(line);
-            string name, category, description;
+            string id, sellerID, name, category, description;
 
             // Parse line (comma-separated values)
-            if (getline(iss, name, ',') &&
+            if (getline(iss, id, ',') &&
+                getline(iss, sellerID, ',') &&
+                getline(iss, name, ',') &&
                 getline(iss, category, ',') &&
                 getline(iss, description, ',')) {
 

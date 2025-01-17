@@ -1,1 +1,2 @@
-1,1,Laptop,Electronics,A gaming laptop,1000,1000,50,4.5,20250115120000
+itemID,sellerID,name,category,desc,startBid,currBid,incrBid,rating,date,time
+I1,U1,Bike,vehicles,2 wheels,50,50,1,1.000000,2025/11/11,20:10:00

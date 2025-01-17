@@ -86,38 +86,51 @@ void Admin::viewMemberInfo(string filePath){
     }
 }
 
-void Admin::viewItemData(string filePath){
+void Admin::viewItemData(string filePath) {
     try {
         ifstream file(filePath);
         if (!file.is_open()) {
-            throw ios_base::failure("Fail to open file.");
+            throw ios_base::failure("Failed to open file.");
         }
 
         // Print table header
         cout << left << setw(5) << "ID"
              << setw(10) << "SellerID"
              << setw(15) << "Name"
-             << setw(20) << "Category"
+             << setw(15) << "Category"
              << setw(20) << "Description"
-             << setw(20) << "Starting Bid $"
-             << setw(20) << "Current Bid $"
-             << setw(20) << "Increment Bid $"
-             << setw(20) << "Rating Points"
+             << setw(15) << "Starting Bid"
+             << setw(15) << "Current Bid"
+             << setw(15) << "Increment Bid"
+             << setw(15) << "Rating Points"
              << setw(20) << "Expiry Date"
+             << setw(20) << "Expiry Time"
              << endl;
 
         cout << string(160, '-') << endl; // Divider line for the table
 
         string line;
-        while (getline(file, line)) {
-            istringstream iss(line);
-            string name, category, description, expiryDate;
-            int ID, sellerID, startingBid, currentBid, bidIncrement;
-            double ratingPoints; 
+        bool isHeader = true;
 
-            // Parse line (comma-separated values)
-            if ((iss >> ID).ignore() &&
-                (iss >> sellerID).ignore() &&
+        while (getline(file, line)) {
+            // Skip the header row
+            if (isHeader) {
+                isHeader = false;
+                continue;
+            }
+
+            // Skip blank lines
+            if (line.empty()) {
+                continue;
+            }
+            istringstream iss(line);
+            string ID, sellerID, name, category, description, expiryDate, expiryTime;
+            int startingBid, currentBid, bidIncrement;
+            double ratingPoints;
+
+            // Ensure the CSV data is correctly split
+            if (getline(iss, ID, ',') &&
+                getline(iss, sellerID, ',') &&
                 getline(iss, name, ',') &&
                 getline(iss, category, ',') &&
                 getline(iss, description, ',') &&
@@ -125,19 +138,21 @@ void Admin::viewItemData(string filePath){
                 (iss >> currentBid).ignore() &&
                 (iss >> bidIncrement).ignore() &&
                 (iss >> ratingPoints).ignore() &&
-                getline(iss, expiryDate)) {
-
+                getline(iss, expiryDate, ',') &&
+                getline(iss, expiryTime)) {
+                
                 // Print parsed data in formatted columns
                 cout << left << setw(5) << ID
-                     << setw(10) << sellerID    
+                     << setw(10) << sellerID
                      << setw(15) << name
-                     << setw(20) << category
+                     << setw(15) << category
                      << setw(20) << description
-                     << setw(20) << startingBid
-                     << setw(20) << currentBid
-                     << setw(20) << bidIncrement
-                     << setw(20) << ratingPoints
+                     << setw(15) << startingBid
+                     << setw(15) << currentBid
+                     << setw(15) << bidIncrement
+                     << setw(15) << ratingPoints
                      << setw(20) << expiryDate
+                     << setw(20) << expiryTime
                      << endl;
             } else {
                 cerr << "Error: Malformed line -> " << line << endl;
@@ -149,4 +164,3 @@ void Admin::viewItemData(string filePath){
         cerr << "An error occurred: " << e.what() << endl;
     }
 }
-

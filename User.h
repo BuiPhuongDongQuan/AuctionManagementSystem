@@ -8,7 +8,6 @@ class User{
     protected:
         static string user_data;
         static vector<User> users;
-    private:
         string userID;
         string username;
         string password;
@@ -38,8 +37,16 @@ class User{
         int getCreditPoints() const;
 
         // Setters
+        void setUserID(string userID);
         void setUsername(string username);
         void setPassword(string password);
+        void setFullname(string fullname);
+        void setPhoneNumber(string phoneNumber);
+        void setEmail(string email);
+        void setIDType(string IDType);
+        void setIDNumber(string IDnumber);
+        void setRating(double rating);
+        void setRatedTimes(int ratedTimes);
         void setCreditPoints(int creditPoints);
 
         // Methods
@@ -48,7 +55,6 @@ class User{
         static bool usernameExist(string username);
         static bool isStrongPassword(string password);
         static User* getUser(string username);
-        static void login(string username, string password);
         static void guestRegister(string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber);
         static void readData();
 
