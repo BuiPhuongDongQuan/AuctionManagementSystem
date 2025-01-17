@@ -22,74 +22,25 @@
 using namespace std;
 
 // Constructor
-Member::Member(){}
-Member::Member(string username = "", string password = "", string fullname = "", string phoneNumber = "", 
+Member::Member() : User(){}
+Member::Member(string memberID = "", string username = "", string password = "", string fullname = "", string phoneNumber = "", 
     string email = "", string IDType = "", string IDNumber = "", double rating = 0.0, int ratingCount = 0, int creditPoints = 0)
-    : memberID(memberID) ,username(username), password(password), fullname(fullname), phoneNumber(phoneNumber), email(email),
-    IDType(IDType), IDNumber(IDNumber), rating(rating), ratingCount(ratingCount),creditPoints(creditPoints) {}
+    : User(memberID ,username, password, fullname, phoneNumber, email,
+    IDType, IDNumber, rating, ratingCount,creditPoints) {}
 
-string Member::toString() const {
-    stringstream ss;
-    ss << memberID << "," << username << "," << password << "," << fullname << ","
-        << phoneNumber << "," << email << "," << IDType << "," << IDNumber 
-        << "," << rating << "," << ratingCount << "," << creditPoints << "\n";
-    return ss.str();
-}
-
-// Method to read member information from a file
-vector<Member> Member::readData(const string& filename) {
-    vector<Member> members;
-    ifstream inFile(filename);
-
-    if (!inFile) {
-        cerr << "Error: Could not open file for reading.\n";
-        return members;
-    }
-
-    string line;
-    while (getline(inFile, line)) {
-        stringstream ss(line);
-        string username, password, fullname, phoneNumber, email, IDType, IDNumber;
-        double rating;
-        int ratingCount, creditPoints, memberID;
-
-        // Parse the member attributes from the line
-        ss >> memberID;
-        ss.ignore();
-        getline(ss, username, ',');
-        getline(ss, password, ',');
-        getline(ss, fullname, ',');
-        getline(ss, phoneNumber, ',');
-        getline(ss, email, ',');
-        getline(ss, IDType, ',');
-        getline(ss, IDNumber, ',');
-        ss >> rating;
-        ss.ignore();
-        ss >> ratingCount;
-        ss.ignore();
-        ss >> creditPoints;
-
-        // Add the parsed member to the vector
-        members.emplace_back(username, password, fullname, phoneNumber, email, IDType, IDNumber, rating, ratingCount, creditPoints);
-        members.back().memberID = memberID; // Ensure the member ID is set correctly
-    }
-
-    inFile.close();
-    return members;
-}
-
-// Display member informations
-void Member::showInfo() const {
-    cout << "========= MEMBER INFORMATION =========\n";
-    cout << "Full Name: " << fullname << "\n";
-    cout << "Username: " << username << "\n";
-    cout << "Email: " << email << "\n";
-    cout << "Phone Number: " << phoneNumber << "\n";
-    cout << "ID Type: " << IDType << "\n";
-    cout << "ID Number: " << IDNumber << "\n";
-    cout << "Credit Points: " << creditPoints << "\n";
-    cout << "Average Rating: " << rating << " (" << ratingCount << " ratings)\n";
-    cout << "======================================\n";
+void Member::showInfo(){
+    for(User member : users){
+            cout << "========= MEMBER INFORMATION =========\n";
+            cout << "Full Name: " << member.getFullname() << "\n";
+            cout << "Username: " << member.getUsername() << "\n";
+            cout << "Email: " << member.getEmail() << "\n";
+            cout << "Phone Number: " << member.getPhoneNumber() << "\n";
+            cout << "ID Type: " << member.getIDType() << "\n";
+            cout << "ID Number: " << member.getIDNumber() << "\n";
+            cout << "Credit Points: " << member.getCreditPoints() << "\n";
+            cout << "Average Rating: " << member.getRating() << " (" << member.getRatedTimes() << " ratings)\n";
+            cout << "======================================\n";
+    } 
 }
 
 // Update member informations
@@ -289,7 +240,7 @@ void Member::updateItemInFile(const std::string& filePath, const Item& updatedIt
 // Helper function to update the member in the file
 void Member::updateMemberInFile(const std::string& filePath) {
     // Read all members from the file
-    std::vector<Member> members = Member::readData(filePath);
+    User::readData();
 
     // Overwrite the file with updated data
     std::ofstream outFile(filePath, std::ios::trunc); // Truncate mode to overwrite the file
@@ -297,8 +248,8 @@ void Member::updateMemberInFile(const std::string& filePath) {
         throw std::runtime_error("Error: Could not open file for writing.");
     }
 
-    for (const auto& member : members) {
-        if (member.getMemberID() == this->getMemberID()) {
+    for (const auto& member : users) {
+        if (member.getUserID() == this->getUserID()) {
             // Write the updated member to the file
             outFile << toString();
         } else {
@@ -325,7 +276,7 @@ int Member::balanceCP() const {
 bool Member::placeBid(const string& auctionID, int bidAmount) {
     // Check if member has an active bid in this auction
     for (auto& bid : activeBids) {
-        if (bid.isActiveBid(auctionID, to_string(memberID))) {
+        if (bid.isActiveBid(auctionID, memberID)) {
             // Update existing bid if the new amount is higher
             if (bidAmount > bid.getActiveBid()) {
                 int requiredPoints = bidAmount - bid.getActiveBid(); // Additional points required
@@ -346,7 +297,7 @@ bool Member::placeBid(const string& auctionID, int bidAmount) {
 
     // New bid
     if (balanceCP() >= bidAmount) {  // Use Member's balanceCP method
-        activeBids.emplace_back(auctionID, to_string(memberID), bidAmount, true);
+        activeBids.emplace_back(auctionID, memberID, bidAmount, true);
         cout << "Bid placed successfully in auction " << auctionID << ". Amount: " << bidAmount << " CP.\n";
         return true;
     } else {
@@ -358,7 +309,7 @@ bool Member::placeBid(const string& auctionID, int bidAmount) {
 // Handle auction result
 void Member::finalizeBid(const string& auctionID, bool won) {
     for (auto& bid : activeBids) {
-        if (bid.isActiveBid(auctionID, to_string(memberID))) {
+        if (bid.isActiveBid(auctionID, memberID)) {
             if (won) {
                 creditPoints -= bid.getActiveBid(); // Deduct bid amount
                 cout << "You won the auction in " << auctionID << "! Deducted " << bid.getActiveBid() << " CP.\n";
@@ -438,7 +389,7 @@ void Member::searchItems(const string& name, const string& category, int minBid,
 
 
 // Getter 
-int Member::getMemberID() const { return memberID; }
+string Member::getMemberID() const { return memberID; }
 string Member::getUsername() const { return username; }
 string Member::getPassword() const { return password; }
 string Member::getFullname() const { return fullname; }

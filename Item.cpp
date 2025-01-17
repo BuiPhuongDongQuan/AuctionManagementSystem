@@ -20,15 +20,6 @@ int Item::nextItemID = 1;
 // Constructor
 
 Item::Item(){}
-Item::Item(int memberID, string name, string category, string description,
-           int startingBid, int currentBid, int bidIncrement, double ratePoint, int year, int month, int day,
-           int hour, int minute, int second)
-    : itemID(nextItemID++), memberID(memberID), name(name), category(category), description(description),
-      startingBid(startingBid), currentBid(currentBid), bidIncrement(bidIncrement), ratePoint(ratePoint) {
-    endDateAndTime = (year * 10000000000LL) + (month * 100000000) + (day * 1000000) +
-                     (hour * 10000) + (minute * 100) + second;
-}
-
 Item::Item(int itemID, int memberID, string name, string category, string description,
            int startingBid, int currentBid, int bidIncrement, double ratePoint, int year, int month, int day,
            int hour, int minute, int second)
@@ -42,48 +33,6 @@ void Item::setItemData(string filePath) {
     item_data = filePath;
 }
 
-// Read items in data file
-void Item::readItemData(){
-    items.clear();
-    int countLine = Function::countLine(item_data);
-
-    vector<string> itemName = Function::readCol(0, item_data, ';');
-    vector<string> category = Function::readCol(1, item_data, ';');
-    vector<string> description = Function::readCol(2, item_data, ';');
-    vector<string> currentBid = Function::readCol(3, item_data, ';');
-    vector<string> bidIncrement = Function::readCol(4, item_data, ';');
-    vector<string> endDateAndTime = Function::readCol(5, item_data, ';');
-    vector<string> ratingPoints = Function::readCol(6, item_data, ';');
-
-    // Ensure all columns have the same number of elements
-    size_t rowCount = itemName.size();
-    if (category.size() != rowCount || description.size() != rowCount || currentBid.size() != rowCount ||
-        bidIncrement.size() != rowCount || endDateAndTime.size() != rowCount || ratingPoints.size() != rowCount) {
-        cerr << "Error: Columns have inconsistent lengths!" << endl;
-        return;
-    }
-
-    // Populate the users vector with User objects
-    for (size_t i = 0; i < rowCount; ++i) { 
-        try {
-            items.emplace_back(itemName[i], category[i], description[i], stoi(currentBid[i]), stoi(bidIncrement[i]), 
-                               stol(endDateAndTime[i]), stod(ratingPoints[i]));
-        } catch (const exception& e) {
-            cerr << "Error processing row " << i << ": " << e.what() << endl;
-            continue;  // Skip this row and continue with the next one
-        }
-    }
-}
-
-// Write item to file
-void Item::writeToFile(const string& filePath, const string& content) {
-    ofstream file(filePath, ios::app);
-    if (!file.is_open()) {
-        throw runtime_error("Failed to open file.");
-    }
-    file << content;
-    file.close();
-}
 
 // Read items from file
 vector<Item> Item::readData(const string& filePath) {
@@ -297,15 +246,6 @@ void Item::displayLimitedDetails() const {
     cout << "Name: " << name << " | Category: " << category << " | Description: " << description << endl;
 }
 
-// Remove listing
-bool Item::removeListing() {
-    if (currentBid > 0) {
-        cout << "Cannot remove listing. Active bids exist for item: " << name << "." << endl;
-        return false;
-    }
-    cout << "Listing removed for item: " << name << "." << endl;
-    return true;
-}
 
 // Timer-related functions
 bool Item::isTimerDone() const {
@@ -367,7 +307,8 @@ string Item::getShowTime() const {
        << setw(2) << setfill('0') << hour << ":"
        << setw(2) << setfill('0') << minute << ":"
        << setw(2) << setfill('0') << second;
-
+    return ss.str();
+}
 void Item::removeItem(const int itemID) {
     items.erase(remove_if(items.begin(), items.end(),
                           [&itemID](const Item& item) { return item.getItemID() == itemID; }),

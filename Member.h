@@ -7,16 +7,17 @@
 #include <vector>
 #include <sstream>
 #include "Bid.h"
+#include "User.h"
 using namespace std;
 
 class Item; 
 
 class Rating;
 
-class Member {
+class Member : public User{
 private:
     static int nextID;
-    int memberID;
+    string memberID;
     string username;
     string password;
     string fullname;
@@ -33,13 +34,13 @@ private:
 
 public:
     Member();
-    Member(string username, string password, string fullname, string phoneNumber, 
+    Member(string memberID, string username, string password, string fullname, string phoneNumber, 
            string email, string IDType, string IDNumber, double rating , int ratingCount, int creditPoint);
 
     // Method
     string toString() const;
     vector<Member> readData(const string &filename);
-    void showInfo() const;
+    void showInfo();
     void updateInfo(const string& filePath);
     void topupCredit(const string& membersFilePath);
     void createListing(const string& filePath);
@@ -54,7 +55,7 @@ public:
     string toLower(const string& str);
 
     // Getters
-    int getMemberID() const;
+    string getMemberID() const;
     string getUsername() const;
     string getPassword() const; 
     string getFullname() const;

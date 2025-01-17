@@ -7,8 +7,9 @@ using namespace std;
 class User{
     protected:
         static string user_data;
+        static vector<User> users;
     private:
-        int userID;
+        string userID;
         string username;
         string password;
         string fullname;
@@ -19,15 +20,22 @@ class User{
         double rating;
         int ratedTimes;
         int creditPoints;
-        static vector<User> users;
     public:
         User();
-        User(int userID, string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber, double rating, int ratedTimes, int creditPoints);
-
+        User(string userID, string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber, double rating, int ratedTimes, int creditPoints);
+        
         // Getters
-        string getUsername();
-        string getPassword();
-        int getCreditPoints();
+        string getUserID() const;
+        string getUsername() const;
+        string getPassword() const;
+        string getFullname() const;
+        string getPhoneNumber() const;
+        string getEmail() const;
+        string getIDType() const;
+        string getIDNumber() const;
+        double getRating() const;
+        int getRatedTimes() const;
+        int getCreditPoints() const;
 
         // Setters
         void setUsername(string username);
@@ -35,6 +43,7 @@ class User{
         void setCreditPoints(int creditPoints);
 
         // Methods
+        string toString() const;
         bool authentication(string username, string password);
         static bool usernameExist(string username);
         static bool isStrongPassword(string password);
@@ -42,5 +51,6 @@ class User{
         static void login(string username, string password);
         static void guestRegister(string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber);
         static void readData();
+
 };
 #endif

@@ -5,7 +5,8 @@
 using namespace std;
 
 // Admin::Admin() : User(){}
-// Admin::Admin(string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber, int creditPoints) : User(username, password, fullname, phoneNumber, email, IDType, IDNumber, creditPoints){}
+// Admin::Admin(string username, string password, string fullname, string phoneNumber, string email, string IDType, string IDNumber, int creditPoints) 
+//: User(username, password, fullname, phoneNumber, email, IDType, IDNumber, creditPoints){}
 
 void Admin::viewMemberInfo(string filePath){
     try {
@@ -93,39 +94,49 @@ void Admin::viewItemData(string filePath){
         }
 
         // Print table header
-        cout << left << setw(15) << "Name"
+        cout << left << setw(5) << "ID"
+             << setw(10) << "SellerID"
+             << setw(15) << "Name"
              << setw(20) << "Category"
              << setw(20) << "Description"
              << setw(20) << "Starting Bid $"
              << setw(20) << "Current Bid $"
              << setw(20) << "Increment Bid $"
+             << setw(20) << "Rating Points"
              << setw(20) << "Expiry Date"
              << endl;
 
-        cout << string(140, '-') << endl; // Divider line for the table
+        cout << string(160, '-') << endl; // Divider line for the table
 
         string line;
         while (getline(file, line)) {
             istringstream iss(line);
             string name, category, description, expiryDate;
-            int startingBid, currentBid, bidIncrement;
+            int ID, sellerID, startingBid, currentBid, bidIncrement;
+            double ratingPoints; 
 
             // Parse line (comma-separated values)
-            if (getline(iss, name, ',') &&
+            if ((iss >> ID).ignore() &&
+                (iss >> sellerID).ignore() &&
+                getline(iss, name, ',') &&
                 getline(iss, category, ',') &&
                 getline(iss, description, ',') &&
                 (iss >> startingBid).ignore() &&
                 (iss >> currentBid).ignore() &&
                 (iss >> bidIncrement).ignore() &&
+                (iss >> ratingPoints).ignore() &&
                 getline(iss, expiryDate)) {
 
                 // Print parsed data in formatted columns
-                cout << left << setw(15) << name
+                cout << left << setw(5) << ID
+                     << setw(10) << sellerID    
+                     << setw(15) << name
                      << setw(20) << category
                      << setw(20) << description
                      << setw(20) << startingBid
                      << setw(20) << currentBid
                      << setw(20) << bidIncrement
+                     << setw(20) << ratingPoints
                      << setw(20) << expiryDate
                      << endl;
             } else {

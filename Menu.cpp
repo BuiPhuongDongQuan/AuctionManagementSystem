@@ -137,7 +137,6 @@ void Menu::guestDashboard(){
     
     case 2:
         registerMenu();
-        loginMenu();
         break;
     }
 }
@@ -167,4 +166,9 @@ void Menu::registerMenu(){
     cin.ignore();
 
     User::guestRegister(username, password, fullname, phoneNumber, email, IDType, IDNumber);
+}
+
+// Member Dashboard
+void Menu::memberDashboard(){
+    member.showInfo();
 }
