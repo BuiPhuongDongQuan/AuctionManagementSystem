@@ -46,8 +46,9 @@ public:
     void rateMember(double ratingValue);
     void updateItemInFile(const string& filePath, const Item& updatedItem);
     void updateMemberInFile(const string& filePath);
+    void updateMemberCreditPointsInFile(const string& filePath);
     int balanceCP()const;
-    bool placeBid(const string& auctionID, int bidAmount);
+    void placeBid(string& auctionID, int memberID,int bidAmount, unordered_map<string, int>& previousBids, int currentBid, const string& filePath);
     void finalizeBid(const string& auctionID, bool won);
     void viewListings(const string& filePath);
     void searchItems(const string& name, const string& category, int minBid, int maxBid);

@@ -1,7 +1,14 @@
 // ! Test Item Function
-#include "Item.h"
 #include <iostream>
+#include <unordered_map>
 #include <vector>
+#include "Member.h"
+#include "Item.h"
+#include "Auction.h"
+#include "Item.h"
+#include "Rating.h"
+#include "Bid.h"
+#include "functions/Function.h"
 #include <fstream>
 #include "Menu.h"
 
@@ -10,3 +17,4 @@ int main(){
     Menu::menuDisplay();
     return 0;
 }
+

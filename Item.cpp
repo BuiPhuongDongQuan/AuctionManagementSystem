@@ -33,7 +33,6 @@ void Item::setItemData(string filePath) {
     item_data = filePath;
 }
 
-
 // Read items from file
 vector<Item> Item::readData(const string& filePath) {
     vector<Item> items;
@@ -246,7 +245,6 @@ void Item::displayLimitedDetails() const {
     cout << "Name: " << name << " | Category: " << category << " | Description: " << description << endl;
 }
 
-
 // Timer-related functions
 bool Item::isTimerDone() const {
     auto now = chrono::system_clock::to_time_t(chrono::system_clock::now());
@@ -307,6 +305,7 @@ string Item::getShowTime() const {
        << setw(2) << setfill('0') << hour << ":"
        << setw(2) << setfill('0') << minute << ":"
        << setw(2) << setfill('0') << second;
+
     return ss.str();
 }
 void Item::removeItem(const int itemID) {
